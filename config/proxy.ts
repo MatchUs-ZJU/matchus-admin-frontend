@@ -9,24 +9,22 @@
 export default {
   dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
-    '/api/': {
+    '/admin/': {
       // 要代理的地址
-      target: 'https://preview.pro.ant.design',
-      // 配置了这个可以从 http 代理到 https
-      // 依赖 origin 的功能可能需要这个，比如 cookie
+      target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
     },
   },
   test: {
-    '/api/': {
-      target: 'https://proapi.azurewebsites.net',
+    '/admin/': {
+      target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
   },
   pre: {
-    '/api/': {
-      target: 'your pre url',
+    '/admin/': {
+      target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },

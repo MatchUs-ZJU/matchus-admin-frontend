@@ -7,23 +7,18 @@ import styles from './Welcome.less';
 const CodePreview: React.FC = ({ children }) => (
   <pre className={styles.pre}>
     <code>
-      <Typography.Text copyable>{children}</Typography.Text>
+      <Typography.Text>{children}</Typography.Text>
     </code>
   </pre>
 );
 
 const Welcome: React.FC = () => {
-  const intl = useIntl();
-
   return (
     <PageContainer>
       <Card>
         <Alert
-          message={intl.formatMessage({
-            id: 'pages.welcome.alertMessage',
-            defaultMessage: 'Faster and stronger heavy-duty components have been released.',
-          })}
-          type="success"
+          message='这是一个不完备的首页'
+          type='warning'
           showIcon
           banner
           style={{
@@ -40,7 +35,7 @@ const Welcome: React.FC = () => {
             <FormattedMessage id="pages.welcome.link" defaultMessage="Welcome" />
           </a>
         </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-components</CodePreview>
+        <CodePreview>点击左侧路由访问各个页面🫲</CodePreview>
       </Card>
     </PageContainer>
   );

@@ -73,4 +73,8 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
+
+  request: {
+    dataField: 'data',
+  }
 });
