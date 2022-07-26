@@ -1,7 +1,3 @@
-export type UserGeneralInfoItem = UserRegisterInfoItem & {
-  isBlack: boolean
-}
-
 export type UserRegisterInfoItem = {
   id: string,
   nickName: string,
@@ -15,6 +11,9 @@ export type UserRegisterInfoItem = {
   material: string,
   basicInfo: number,
   activityList: number[],
+  country: string,
+  province: string,
+  city: string,
 }
 
 export type PersonInfoItem = {
@@ -45,7 +44,7 @@ export type PersonInfoItem = {
   stayUp: string,
   drink: string,
   smoking: string,
-  discoDancing :string,
+  discoDancing: string,
   willingness: string,
   loveNumber: string,
   income: string,
@@ -71,7 +70,7 @@ export type MatchSuccessItem = MatchResultBase & {
   refund: number
 }
 
-export type MatchFailureItem =  MatchResultBase & {
+export type MatchFailureItem = MatchResultBase & {
   proportion: number,
   reason: string,
   refund: number,

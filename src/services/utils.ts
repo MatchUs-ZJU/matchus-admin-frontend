@@ -1,5 +1,7 @@
 import {RequestConfig} from "@@/plugin-request/request";
 
+export const BASE_URL = '/api/admin'
+
 export const setToken = (token: string) => {
   localStorage.setItem('token', token)
 }
@@ -13,7 +15,7 @@ export const removeToken = () => {
 }
 
 export const authHeaderInterceptor = (url: string, options: RequestConfig) => {
-  if(url === '/admin/login') {
+  if(url === `${BASE_URL}/login`) {
     return {
       url,
       options: { ...options },

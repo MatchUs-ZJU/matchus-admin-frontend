@@ -15,7 +15,7 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    // https://umijs.org/zh-CN/plugins/plugin-layout
+    // https://umijs.org/zh-CN/plugins/pluginadm-layout
     locale: true,
     siderWidth: 208,
     ...defaultSettings,
@@ -73,7 +73,6 @@ export default defineConfig({
   mfsu: {},
   webpack5: {},
   exportStatic: {},
-
   request: {
     dataField: 'data',
   }

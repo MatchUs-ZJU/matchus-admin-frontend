@@ -8,25 +8,25 @@
  */
 export default {
   dev: {
-    // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
-    '/admin/': {
-      // 要代理的地址
+    '/api/': {
       target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
+      pathRewrite: { '^/api': '' },
+      secure: false,
     },
   },
   test: {
-    '/admin/': {
+    '/api/': {
       target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
   pre: {
-    '/admin/': {
+    '/api/': {
       target: 'https://springboot-0yud-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
 };

@@ -50,6 +50,7 @@ const Login: React.FC = () => {
           currentUser: {
             name: 'admin',
             access: 'admin',
+            avatar: 'https://s1.ax1x.com/2022/07/24/jjE18x.png',
             currentAuthority: 'admin'
           }
         }
@@ -58,13 +59,13 @@ const Login: React.FC = () => {
 
     try {
       const res = await login({...values, type});
-      if (res && res.token) {
+      if (res.success && res.data.token) {
         message.success(intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         }));
 
-        setUserState(res)
+        setUserState(res.data)
 
         if (!history) return;
         const {query} = history.location;

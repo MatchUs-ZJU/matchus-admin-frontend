@@ -20,7 +20,7 @@ export const initialStateConfig = {
 export const request: RequestConfig = {
   timeout: 10000,
   errorConfig: {
-    adaptor: (resData: API.ResponseData) => {
+    adaptor: (resData: API.ResponseData<any>) => {
       return {
         ...resData,
         success: resData.success,
@@ -31,6 +31,7 @@ export const request: RequestConfig = {
     },
   },
   requestInterceptors: [authHeaderInterceptor],
+  responseInterceptors: []
 }
 
 export async function getInitialState(): Promise<{
@@ -64,6 +65,7 @@ export async function getInitialState(): Promise<{
     return {
       currentUser: {
         name: 'admin',
+        avatar: 'https://s1.ax1x.com/2022/07/24/jjE18x.png',
         access: 'admin',
         currentAuthority: 'admin'
       },

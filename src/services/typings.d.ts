@@ -1,9 +1,13 @@
 declare namespace API {
-  type ResponseData = {
+  type ResponseData<T> = {
     msg: string,
-    data: object,
+    data: T,
     code: string,
     success: boolean,
+  }
+
+  type NormalSuccessData = {
+    success: boolean
   }
 
   type LoginParams = {
@@ -19,6 +23,7 @@ declare namespace API {
 
   type CurrentUser = {
     name?: string;
+    avatar?: string;
     access?: string;
     currentAuthority?: string;
   };
@@ -27,6 +32,13 @@ declare namespace API {
     current?: number;
     pageSize?: number;
   };
+
+  type PaginationResult = {
+    total?: number,   // 数据总数
+    size?: number,    // 页容量
+    current?: number, // 当前页
+    pages?: number,   // 总页数
+  }
 
   type RuleListItem = {
     key?: number;
