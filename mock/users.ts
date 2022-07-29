@@ -9,8 +9,8 @@ const genUserList = (total: number) => {
       activityList: [index % 7 + 1, (index + 1) % 7 + 1,],
       city: "111",
       country: "222",
-      isComplete: 0,
-      material: "https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/identify/logo.png?sign=bf78a98d0aedce4456a5f3680699d63f&t=1658823586",
+      isComplete: index % 2,
+      material: 'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882',
       province: "333",
       id: index,
       nickName: `nlxm${index}`,
@@ -21,7 +21,13 @@ const genUserList = (total: number) => {
       phoneNumber: `1888891${index}`,
       faculty: index % 48,
       identified: index % 4,
-      isBlack: index % 2
+      isBlack: index % 2,
+      appearance: index % 6,
+      photos: [
+        'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882',
+        'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882',
+        'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882'
+      ]
     });
   }
   ds.reverse();
@@ -73,6 +79,75 @@ const editBlackList = (req: Request, res: Response) => {
   }
 }
 
+const getUserRegisterInfoList = getUserGeneralInfoList
+
+const checkUser = (req: Request, res: Response) => {
+  let success = true
+  if(req.body.identified !== 1 && req.body.identified !== 0) {
+    success = false
+  }
+
+  userList = userList.map((o) => {
+    if(o.id === req.body.id) {
+      o.identified = req.body.identified === 1 ? 3 : req.body.identified === 0 ? 2 : 1
+    }
+    return o
+  })
+
+  if(success) {
+    res.send(successResponse({
+      success: true
+    }))
+  } else {
+    res.send(failResponse(200, 'check user fail'))
+  }
+}
+
+const editRegisterInfo = (req: Request, res: Response) => {
+  let success = false
+  userList = userList.map((o) => {
+    if(o.id === req.body.id) {
+      success = true
+      return {
+        ...o,
+        ...req.body
+      }
+    }
+    return o
+  })
+
+  if(success) {
+    res.send(successResponse({
+      success: true
+    }))
+  } else {
+    res.send(failResponse(200, 'edit register info fail'))
+  }
+}
+
+const editAppearance = (req: Request, res: Response) => {
+  console.log(req.body)
+  let success = true
+  if(req.body.appearance === 0) {
+    success = false
+  }
+
+  userList = userList.map((o) => {
+    if(o.id === req.body.userId) {
+      o.appearance = req.body.appearance
+    }
+    return o
+  })
+
+  if(success) {
+    res.send(successResponse({
+      success: true
+    }))
+  } else {
+    res.send(failResponse(200, 'edit user appearance sfail'))
+  }
+}
+
 
 export default {
   'GET /api/admin/user/info': getUserGeneralInfoList,
@@ -80,4 +155,12 @@ export default {
   'POST /api/admin/user/blacklist': editBlackList,
 
   'POST /api/admin/user/delUser': deleteUser,
+
+  'GET /api/admin/register/info': getUserRegisterInfoList,
+
+  'POST /api/admin/register/check': checkUser,
+
+  'POST /api/admin/register/info': editRegisterInfo,
+
+  'POST /api/admin/user/appearance': editAppearance
 };

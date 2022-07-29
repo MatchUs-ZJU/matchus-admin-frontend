@@ -7,7 +7,7 @@ export default {
     await waitTime(2000);
     if (password === 'matchus1010' && username === 'matchus') {
       res.send(successResponse({
-        token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NTg5MjY3NDUsImlhdCI6MTY1NzYzMDc0NSwidXNlcm5hbWUiOiJtYXRjaHVzIn0.Hk-UU913pxktLa3gflPVzDwl-F7LYKYiQJ0-1mSdMys'
+        token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2NjAyOTM4OTMsImlhdCI6MTY1ODk5Nzg5MywidXNlcm5hbWUiOiJtYXRjaHVzIn0.behDB5T9LYcovbLQO-EF-sTkOAuUE-5m9KwPWbtVOdE'
       }));
       return;
     }

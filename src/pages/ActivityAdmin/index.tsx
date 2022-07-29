@@ -1,18 +1,18 @@
 import React, {useRef} from "react";
-import {PageContainer} from "@ant-design/pro-components";
+import {PageContainer} from "@ant-design/pro-layout";
 import {ActionType, ProTable} from "@ant-design/pro-table";
 import type {ProColumns} from "@ant-design/pro-table";
-import {PaginationParamType, PersonInfoItem} from "@/pages/data";
-import {Button} from "antd";
-import {EditOutlined, ExportOutlined} from "@ant-design/icons";
-import {getUserGeneralInfo} from "@/services/users";
+import {PaginationParamType} from "@/pages/data";
+import {Button, Menu, Dropdown, Radio} from "antd";
+import {DownOutlined, EditOutlined, ExportOutlined} from "@ant-design/icons";
+import {MatchSuccessItem} from "@/pages/ActivityAdmin/data";
 
 
 const ActivityAdmin: React.FC = () => {
 
   const actionRef = useRef<ActionType>();
 
-  const columns: ProColumns<PersonInfoItem>[] = [
+  const columns: ProColumns<MatchSuccessItem>[] = [
     {
       title: '姓名',
       dataIndex: 'name',
@@ -92,36 +92,48 @@ const ActivityAdmin: React.FC = () => {
 
 
   return (
-    <PageContainer
-      header={{
-        title: '注册信息'
-      }}
-    >
+    <PageContainer>
       <ProTable
-        <PersonInfoItem, PaginationParamType>
-        headerTitle='个人信息表格'
+        <MatchSuccessItem, PaginationParamType>
+        headerTitle='活动信息表格'
         actionRef={actionRef}
         rowKey='key'
         search={{
-          labelWidth: 120,
+          labelWidth: 'auto',
         }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            disabled
-          >
-            <EditOutlined/> 修改
-          </Button>,
-          <Button
-            type="primary"
-            key="primary"
-            disabled
-          >
-            <ExportOutlined/> 导出
-          </Button>,
-        ]}
-        request={getUserGeneralInfo}
+        toolbar={{
+          filter: (
+            <Radio.Group buttonStyle="solid"
+                         // onChange={(e) => setCurrentRating(e.target.value)}
+            >
+              <Radio.Button value={1}>匹配成功</Radio.Button>
+              <Radio.Button value={2}>匹配失败</Radio.Button>
+              <Radio.Button value={3}>出库用户</Radio.Button>
+            </Radio.Group>
+          ),
+          actions: [
+            <Dropdown
+              key="overlay"
+              overlay={
+                <Menu onClick={() => alert('menu click')}>
+                  <Menu.Item key="1">菜单</Menu.Item>
+                  <Menu.Item key="2">列表</Menu.Item>
+                  <Menu.Item key="3">表单</Menu.Item>
+                </Menu>
+              }
+            >
+              <Button>
+                选择活动
+                <DownOutlined
+                  style={{
+                    marginLeft: 8,
+                  }}
+                />
+              </Button>
+            </Dropdown>,
+          ],
+        }}
+        //request={getUserGeneralInfo}
         columns={columns}
       />
     </PageContainer>

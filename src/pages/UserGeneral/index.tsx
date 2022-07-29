@@ -29,6 +29,7 @@ const UserGeneral: React.FC = () => {
     } else {
       message.success('删除用户成功', SUCCESS_MESSAGE_DURATION);
     }
+    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
@@ -40,6 +41,7 @@ const UserGeneral: React.FC = () => {
     } else {
       message.success('编辑黑名单成功', SUCCESS_MESSAGE_DURATION);
     }
+    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
@@ -51,19 +53,11 @@ const UserGeneral: React.FC = () => {
     {
       title: '姓名',
       dataIndex: 'realName',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
     },
     {
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => parseInt(o1.studentNumber) - parseInt(o2.studentNumber)
+      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber)
     },
     {
       title: '性别',
@@ -172,7 +166,7 @@ const UserGeneral: React.FC = () => {
       },
       render: (_, {activityList}) => (
         <>
-          {activityList.sort((o1, o2) => o1 - o2).map(activity => {
+          {activityList?.sort((o1, o2) => o1 - o2).map(activity => {
             return (
               <Tag color='purple' key={activity}>
                 第{activity}期
@@ -237,7 +231,7 @@ const UserGeneral: React.FC = () => {
         actionRef={actionRef}
         rowKey='key'
         search={{
-          labelWidth: 120,
+          labelWidth: 'auto',
         }}
         toolBarRender={() => [
           <Button
@@ -274,7 +268,10 @@ const UserGeneral: React.FC = () => {
       />
       <Modal title="删除用户" visible={confirmDeleteModalVisible}
              onOk={handleConfirmDelete}
-             onCancel={() => setConfirmDeleteModalVisible(false)}
+             onCancel={() => {
+               setConfirmDeleteModalVisible(false)
+               setCurrentRow(undefined)
+             }}
              okText='确认'
              cancelText='取消'
       >
@@ -282,7 +279,10 @@ const UserGeneral: React.FC = () => {
       </Modal>
       <Modal title={`将用户${currentRow?.isBlack ? '移除' : '加入'}黑名单`} visible={confirmEditBlackListModalVisible}
              onOk={handleConfirmEditBlackList}
-             onCancel={() => setConfirmEditBlackListModalVisible(false)}
+             onCancel={() => {
+               setCurrentRow(undefined)
+               setConfirmEditBlackListModalVisible(false)
+             }}
              okText='确认'
              cancelText='取消'
       >

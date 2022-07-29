@@ -3,6 +3,7 @@ import { Alert, Card, Typography } from 'antd';
 import React from 'react';
 import { FormattedMessage } from 'umi';
 import styles from './Welcome.less';
+import {getToken} from "@/services/utils";
 
 const CodePreview: React.FC = ({ children }) => (
   <pre className={styles.pre}>
@@ -13,6 +14,8 @@ const CodePreview: React.FC = ({ children }) => (
 );
 
 const Welcome: React.FC = () => {
+
+  console.log('1111111', getToken())
   return (
     <PageContainer>
       <Card>
