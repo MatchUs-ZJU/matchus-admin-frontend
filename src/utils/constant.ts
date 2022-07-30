@@ -10,3 +10,7 @@ export enum IDENTIFY_STATUS {
 }
 
 export const IDENTIFY_PASS = 1, IDENTIFY_NOT_PASS = 0
+
+export const loginPath = '/user/login'
+
+export const CHOOSE = 1, NOT_CHOOSE = 2

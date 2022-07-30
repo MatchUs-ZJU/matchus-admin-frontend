@@ -7,10 +7,12 @@ import {history} from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import {RequestConfig} from "@@/plugin-request/request";
 import UnAccessiblePage from "@/pages/403";
-import {authHeaderInterceptor, getToken} from "@/services/utils";
+import {authHeaderInterceptor, getToken, removeToken} from "@/services/utils";
+import {ResponseError} from "umi-request";
+import {message} from "antd";
+import {loginPath} from "@/utils/constant";
 
 // const isDev = process.env.NODE_ENV === 'development';
-const loginPath = '/user/login';
 
 export const initialStateConfig = {
   loading: <PageLoading/>,
@@ -29,6 +31,15 @@ export const request: RequestConfig = {
         data: resData.data
       };
     },
+  },
+  errorHandler: async (error: ResponseError<any>) => {
+    const msg = (error.data.msg && error.data.msg !== '') ? error.data.msg : '服务器内部错误'
+    message.error(`${error.message}: ${msg}`)
+
+    if (error.data.code === 1002) {
+      removeToken()
+      history.push(loginPath)
+    }
   },
   requestInterceptors: [authHeaderInterceptor],
   responseInterceptors: []

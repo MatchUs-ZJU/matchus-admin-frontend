@@ -7,6 +7,7 @@ import {history, useModel} from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 import {removeToken} from "@/services/utils";
+import {loginPath} from "@/utils/constant";
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -39,7 +40,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({menu}) => {
       if (key === 'logout') {
         setInitialState((s) => ({...s, currentUser: undefined}));
         removeToken()
-        window.location.href = '/'
+        history.push(loginPath)
         return;
       }
     },

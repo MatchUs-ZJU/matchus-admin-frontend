@@ -1,22 +1,34 @@
-export type MatchResultBase = {
+import {DailyQuestionInfo, Fields} from "@/pages/data";
+
+export type MatchResultItem = {
   id: string,
   name: string,
   studentNumber: string,
+  gender: number,
+  success: MatchSuccessInfo | undefined,
+  fail: MatchFailInfo | undefined,
+  surveyComplete: number,
+  out: number,
+  refund: number,
 }
 
-export type MatchSuccessItem = MatchResultBase & {
-  gender: number,
+export type MatchSuccessInfo = {
   matchUserId: string,
   matchName: string,
   matchStudentNumber: string,
   answerDay: number,
   twc: number,
-  twcResult: number,
-  refund: number
+  twcResult: number
 }
 
-export type MatchFailureItem = MatchResultBase & {
-  proportion: number,
+export type MatchFailInfo = {
+  proportion?: number,
   reason: string,
-  refund: number,
+}
+
+export type UserMatchInfo = {
+  matchInfo: {
+    info: Fields[]
+  },
+  dailyQuestion: DailyQuestionInfo[]
 }

@@ -75,7 +75,7 @@ const editBlackList = (req: Request, res: Response) => {
       success: true
     }))
   } else {
-    res.send(failResponse(200, 'edit black list fail'))
+    res.send(failResponse(1001, 'edit black list fail'))
   }
 }
 
@@ -99,7 +99,7 @@ const checkUser = (req: Request, res: Response) => {
       success: true
     }))
   } else {
-    res.send(failResponse(200, 'check user fail'))
+    res.send(failResponse(1001, 'check user fail'))
   }
 }
 
@@ -121,12 +121,11 @@ const editRegisterInfo = (req: Request, res: Response) => {
       success: true
     }))
   } else {
-    res.send(failResponse(200, 'edit register info fail'))
+    res.send(failResponse(1001, 'edit register info fail'))
   }
 }
 
 const editAppearance = (req: Request, res: Response) => {
-  console.log(req.body)
   let success = true
   if(req.body.appearance === 0) {
     success = false
@@ -144,7 +143,7 @@ const editAppearance = (req: Request, res: Response) => {
       success: true
     }))
   } else {
-    res.send(failResponse(200, 'edit user appearance sfail'))
+    res.send(failResponse(1001, 'edit user appearance fail'))
   }
 }
 

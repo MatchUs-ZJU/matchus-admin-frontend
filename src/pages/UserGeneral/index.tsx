@@ -49,10 +49,12 @@ const UserGeneral: React.FC = () => {
     {
       title: '昵称',
       dataIndex: 'nickName',
+      fixed: 'left'
     },
     {
       title: '姓名',
       dataIndex: 'realName',
+      fixed: 'left'
     },
     {
       title: '学号',
@@ -233,6 +235,7 @@ const UserGeneral: React.FC = () => {
         search={{
           labelWidth: 'auto',
         }}
+        scroll={{ x: 2000 }}
         toolBarRender={() => [
           <Button
             type="primary"

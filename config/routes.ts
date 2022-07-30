@@ -48,11 +48,6 @@ export default [
             name: '活动信息',
             component: './ActivityAdmin',
           },
-          {
-            path: '/admin/test',
-            name: '测试',
-            component: './UserAdmin',
-          },
         ]
       },
       {
