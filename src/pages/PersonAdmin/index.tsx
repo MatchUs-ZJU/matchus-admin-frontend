@@ -80,17 +80,27 @@ const PersonAdmin: React.FC = () => {
     return <PageLoading/>
   }
 
-  const handleConfirmRating = async () => {
+  const handleConfirmRating = async (notCorrect?: boolean) => {
     setRatingDrawerVisible(false)
-    if (currentRating !== 0) {
-      const res = await rateAppearance(currentRow?.id as string, currentRating)
+
+    if (notCorrect) {
+      const res = await rateAppearance(currentRow?.id as string, -1)
       if (!res.success) {
         message.error('颜值打分失败', FAIL_MESSAGE_DURATION);
       } else {
         message.success('颜值打分成功', SUCCESS_MESSAGE_DURATION);
       }
     } else {
-      message.warning('未选择颜值分数', FAIL_MESSAGE_DURATION);
+      if (currentRating !== 0) {
+        const res = await rateAppearance(currentRow?.id as string, currentRating)
+        if (!res.success) {
+          message.error('颜值打分失败', FAIL_MESSAGE_DURATION);
+        } else {
+          message.success('颜值打分成功', SUCCESS_MESSAGE_DURATION);
+        }
+      } else {
+        message.warning('未选择颜值分数', FAIL_MESSAGE_DURATION);
+      }
     }
 
     setCurrentRow(undefined)
@@ -133,23 +143,27 @@ const PersonAdmin: React.FC = () => {
       title: '颜值',
       dataIndex: 'appearance',
       valueEnum: {
-        0: {
+        '-1': {
+          text: '不符合',
+          status: 'Error'
+        },
+        '0': {
           text: '未打分',
           status: 'Warning'
         },
-        1: {
+        '1': {
           text: '前0-10%',
         },
-        2: {
+        '2': {
           text: '前10-30%',
         },
-        3: {
+        '3': {
           text: '前30-50%',
         },
-        4: {
+        '4': {
           text: '前50-70%',
         },
-        5: {
+        '5': {
           text: '前70-100%',
         },
       },
@@ -275,6 +289,14 @@ const PersonAdmin: React.FC = () => {
             }
           }
         }}
+        postData={(data => {
+          return data.map((record) => {
+            return {
+              ...record,
+              appearance: record.appearance.toString()
+            }
+          })
+        })}
         columns={columns}
         scroll={{x: calcScrollWidth(columnsState), y: 600}}
         columnsState={{
@@ -320,10 +342,9 @@ const PersonAdmin: React.FC = () => {
         <Space style={{marginTop: '24px'}}>
           <Button type="primary" size='large' style={{width: '96px'}}
                   onClick={() => handleConfirmRating()}>提交</Button>
-          <Button type="primary" size='large' style={{width: '96px'}} danger disabled
-                  onClick={() => {
-                    setCurrentRating(6)
-                    handleConfirmRating()
+          <Button type="primary" size='large' style={{width: '96px'}} danger
+                  onClick={async () => {
+                    await handleConfirmRating(true)
                   }}>不符合</Button>
         </Space>
       </Drawer>
@@ -367,12 +388,14 @@ const PersonAdmin: React.FC = () => {
               return (
                 <Row>
                   <Col span={12}>
-                    <DescriptionItem title={columnAttrList[index].column} content={currentRow?.[columnAttrList[index].dataIndex]} />
+                    <DescriptionItem title={columnAttrList[index].column}
+                                     content={currentRow?.[columnAttrList[index].dataIndex]}/>
                   </Col>
                   {
-                    (index !== (columnAttrList.length-1)) &&
+                    (index !== (columnAttrList.length - 1)) &&
                     <Col span={12}>
-                      <DescriptionItem title={columnAttrList[index+1].column} content={currentRow?.[columnAttrList[index+1].dataIndex]} />
+                      <DescriptionItem title={columnAttrList[index + 1].column}
+                                       content={currentRow?.[columnAttrList[index + 1].dataIndex]}/>
                     </Col>
                   }
                 </Row>

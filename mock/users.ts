@@ -22,7 +22,7 @@ const genUserList = (total: number) => {
       faculty: index % 48,
       identified: index % 4,
       isBlack: index % 2,
-      appearance: index % 6,
+      appearance: (index % 7) - 1,
       photos: [
         'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882',
         'https://6d61-matchus-backend-dev-8cpqf11d7b0e-1309499644.tcb.qcloud.la/person-info/3180102262-%E6%B1%AA%E7%B4%AB%E8%8F%B1-1658848350744.png?sign=63f26fb5221752ca150d312796c7e679&t=1658908882',
