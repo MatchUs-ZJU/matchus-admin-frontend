@@ -1,0 +1,15 @@
+export type UserGeneralInfoItem = {
+  id: number,
+  nickName: string,
+  realName: string,
+  studentNumber: string,
+  gender: number,
+  userType: number,
+  phoneNumber: string,
+  faculty: number,
+  identified: number,
+  material: string,
+  activityList: number[],
+  isBlack: number,
+  isComplete: number,
+}

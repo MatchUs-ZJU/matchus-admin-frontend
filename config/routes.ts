@@ -6,7 +6,7 @@ export default [
       {
         name: 'login',
         path: '/user/login',
-        component: './user/Login',
+        component: './Login',
       },
       {
         component: './404',
@@ -16,27 +16,39 @@ export default [
   {
     path: '/welcome',
     name: 'welcome',
-    icon: 'smile',
     component: './Welcome',
     hideInMenu: true,
   },
   {
     path: '/admin',
     name: 'admin',
-    access: 'canAdmin',
     flatMenu: true,
     routes: [
       {
-        path: '/admin/data',
-        name: '数据看板',
-        icon: 'dashboard',
-        component: './DataAnalysis',
-      },
-      {
-        path: '/admin/users',
         name: '用户管理',
         icon: 'user',
-        component: './UserAdmin',
+        routes: [
+          {
+            path: '/admin/general',
+            name: '用户概览',
+            component: './UserGeneral',
+          },
+          {
+            path: '/admin/register',
+            name: '注册信息',
+            component: './RegisterAdmin',
+          },
+          {
+            path: '/admin/person',
+            name: '个人信息',
+            component: './PersonAdmin',
+          },
+          {
+            path: '/admin/activity',
+            name: '活动信息',
+            component: './ActivityAdmin',
+          },
+        ]
       },
       {
         component: './404',
