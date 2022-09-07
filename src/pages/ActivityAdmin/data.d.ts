@@ -5,12 +5,10 @@ export type MatchResultItem = {
   name: string,
   studentNumber: string,
   gender: number,
-  success: MatchSuccessInfo | undefined,
-  fail: MatchFailInfo | undefined,
   surveyComplete: number,
   out: number,
   refund: number,
-}
+} & MatchSuccessInfo & MatchFailInfo
 
 export type MatchSuccessInfo = {
   matchUserId: string,
@@ -19,6 +17,7 @@ export type MatchSuccessInfo = {
   answerDay: number,
   twc: number,
   twcResult: number
+  isTwice: boolean
 }
 
 export type MatchFailInfo = {
@@ -30,5 +29,5 @@ export type UserMatchInfo = {
   matchInfo: {
     info: Fields[]
   },
-  dailyQuestion: DailyQuestionInfo[]
+  dailyQuestion: DailyQuestionInfo
 }

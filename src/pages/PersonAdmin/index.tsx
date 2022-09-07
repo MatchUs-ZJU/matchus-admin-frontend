@@ -44,7 +44,7 @@ const columnAttrList = [
 ]
 
 const getInitialColumnsState = () => {
-  let result = {}
+  const result = {}
   columnAttrList.forEach((attr) => {
     result[attr.dataIndex] = {
       show: false
@@ -111,7 +111,7 @@ const PersonAdmin: React.FC = () => {
   const columns: ProColumns<PersonInfoItem>[] = [
     {
       title: '姓名',
-      dataIndex: 'realName',
+      dataIndex: 'realname',
       fixed: 'left',
       width: 100
     },
@@ -316,7 +316,7 @@ const PersonAdmin: React.FC = () => {
       >
         <Row>
           <Col span={24}>
-            <DescriptionItem title='姓名' content={currentRow?.realName}/>
+            <DescriptionItem title='姓名' content={currentRow?.realname}/>
           </Col>
         </Row>
         {
@@ -360,7 +360,7 @@ const PersonAdmin: React.FC = () => {
       >
         <Row>
           <Col span={12}>
-            <DescriptionItem title='姓名' content={currentRow?.realName}/>
+            <DescriptionItem title='姓名' content={currentRow?.realname}/>
           </Col>
           <Col span={12}>
             <DescriptionItem title='学号' content={currentRow?.studentNumber}/>

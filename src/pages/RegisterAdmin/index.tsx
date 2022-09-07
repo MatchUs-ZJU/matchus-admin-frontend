@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
-import {ActionType, ProTable} from "@ant-design/pro-table";
-import type {ProColumns} from "@ant-design/pro-table";
+import { ProTable} from "@ant-design/pro-table";
+import type {ProColumns,ActionType} from "@ant-design/pro-table";
 import {
   Alert,
   Button,
@@ -20,7 +20,7 @@ import {
 } from "antd";
 import {ExportOutlined} from "@ant-design/icons";
 import {getUserRegisterInfo, checkRegisterInfo, editRegisterInfo} from "@/services/users";
-import {UserRegisterInfoItem} from "@/pages/RegisterAdmin/data";
+import type {UserRegisterInfoItem} from "@/pages/RegisterAdmin/data";
 import {
   FAIL_MESSAGE_DURATION,
   IDENTIFY_NOT_PASS,
@@ -97,7 +97,7 @@ const RegisterAdmin: React.FC = () => {
   const columns: ProColumns<UserRegisterInfoItem>[] = [
     {
       title: '用户姓名',
-      dataIndex: 'realName',
+      dataIndex: 'realname',
     },
     {
       title: '学号',
@@ -215,7 +215,6 @@ const RegisterAdmin: React.FC = () => {
     },
   ]
 
-
   return (
     <PageContainer>
       <ProTable
@@ -287,7 +286,7 @@ const RegisterAdmin: React.FC = () => {
         />
         <Row>
           <Col span={24}>
-            <DescriptionItem title='姓名' content={currentRow?.realName}/>
+            <DescriptionItem title='姓名' content={currentRow?.realname}/>
           </Col>
         </Row>
         <Row>

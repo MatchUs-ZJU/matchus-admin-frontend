@@ -27,11 +27,13 @@ export type Fields = {
 }
 
 export type DailyQuestionInfo = {
-  index: number,
-  question: string,
-  answer: string,
-  like: boolean,
-  matchQuestion: string,
-  matchAnswer: string,
-  matchLike: boolean,
+  user: DailyQuestion[]
+  matchUser: DailyQuestion[]
+}
+
+export type DailyQuestion = {
+  like: boolean
+  answer: string
+  question: string
+  index: number
 }

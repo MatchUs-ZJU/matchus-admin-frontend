@@ -1,7 +1,7 @@
 export type UserRegisterInfoItem = {
   id: string,
-  nickName: string,
-  realName: string,
+  nickname: string,
+  realname: string,
   studentNumber: string,
   gender: number,
   userType: number,

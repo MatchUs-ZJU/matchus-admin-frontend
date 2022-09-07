@@ -48,12 +48,12 @@ const UserGeneral: React.FC = () => {
   const columns: ProColumns<UserGeneralInfoItem>[] = [
     {
       title: '昵称',
-      dataIndex: 'nickName',
+      dataIndex: 'nickname',
       fixed: 'left'
     },
     {
       title: '姓名',
-      dataIndex: 'realName',
+      dataIndex: 'realname',
       fixed: 'left'
     },
     {
@@ -278,7 +278,7 @@ const UserGeneral: React.FC = () => {
              okText='确认'
              cancelText='取消'
       >
-        确认删除该用户：姓名-{currentRow?.realName} 学号-{currentRow?.studentNumber} ?
+        确认删除该用户：姓名-{currentRow?.realname} 学号-{currentRow?.studentNumber} ?
       </Modal>
       <Modal title={`将用户${currentRow?.isBlack ? '移除' : '加入'}黑名单`} visible={confirmEditBlackListModalVisible}
              onOk={handleConfirmEditBlackList}
@@ -289,7 +289,7 @@ const UserGeneral: React.FC = () => {
              okText='确认'
              cancelText='取消'
       >
-        确认将该用户{currentRow?.isBlack ? '移除' : '加入'}黑名单：姓名-{currentRow?.realName} 学号-{currentRow?.studentNumber} ?
+        确认将该用户{currentRow?.isBlack ? '移除' : '加入'}黑名单：姓名-{currentRow?.realname} 学号-{currentRow?.studentNumber} ?
       </Modal>
     </PageContainer>
   )

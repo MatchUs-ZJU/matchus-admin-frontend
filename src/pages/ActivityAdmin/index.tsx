@@ -1,15 +1,16 @@
 import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
-import {ActionType, ProColumns, ProTable} from "@ant-design/pro-table";
-import {ActivityItem,} from "@/pages/data";
+import type {ActionType, ProColumns} from "@ant-design/pro-table";
+import { ProTable} from "@ant-design/pro-table";
+import type {ActivityItem,} from "@/pages/data";
 import {Button, Menu, Dropdown, Radio, Tag, Drawer, Select, message, Popconfirm} from "antd";
 import {DownOutlined} from "@ant-design/icons";
-import {MatchResultItem} from "@/pages/ActivityAdmin/data";
+import type {MatchResultItem} from "@/pages/ActivityAdmin/data";
 import {useRequest} from "@@/plugin-request/request";
 import {editTwc, getActivityList, getActivityMatchInfo, modifyFailReason, outPool} from "@/services/activity";
 import {PageLoading} from "@ant-design/pro-components";
 import {CHOOSE, FAIL_MESSAGE_DURATION, NOT_CHOOSE, SUCCESS_MESSAGE_DURATION} from "@/utils/constant";
-import {FilterValue, SorterResult} from "antd/es/table/interface";
+import type {FilterValue, SorterResult} from "antd/es/table/interface";
 import MatchDetail from "@/pages/ActivityAdmin/MatchDetail";
 import DailyQuestions from "@/pages/ActivityAdmin/DailyQuestions";
 
@@ -32,42 +33,6 @@ const ActivityAdmin: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
   const [sortedInfo, setSortedInfo] = useState<SorterResult<any>>({});
 
-  const handleConfirmModifyReason = async () => {
-    setModifyReasonDrawerVisible(false)
-    const res = await modifyFailReason(reqActivity?.id as number, currentRow?.studentNumber as string, failReason)
-    if (!res.success) {
-      message.error('编辑匹配失败原因失败', FAIL_MESSAGE_DURATION);
-    } else {
-      message.success('编辑匹配失败原因成功', SUCCESS_MESSAGE_DURATION);
-    }
-
-    setCurrentRow(undefined)
-    setFailReason('')
-    actionRef?.current?.reloadAndRest?.()
-  }
-
-  const handleOutPool = async (out: number, record: MatchResultItem) => {
-    const res = await outPool(reqActivity?.id as number, record.studentNumber as string, out)
-    if (!res.success) {
-      message.error('出/入库失败', FAIL_MESSAGE_DURATION);
-    } else {
-      message.success('出/入库成功', SUCCESS_MESSAGE_DURATION);
-    }
-
-    actionRef?.current?.reloadAndRest?.()
-  }
-
-  const handleEditTwc = async (choice: number, record: MatchResultItem) => {
-    const res = await editTwc(reqActivity?.id as number, record.studentNumber as string, choice)
-    if (!res.success) {
-      message.error('修改双选操作失败', FAIL_MESSAGE_DURATION);
-    } else {
-      message.success('修改双选操作成功', SUCCESS_MESSAGE_DURATION);
-    }
-
-    actionRef?.current?.reloadAndRest?.()
-  }
-
   // 加载活动列表
   let {loading, data: activityList} = useRequest(getActivityList, {
     formatResult: res => res?.data.activityList
@@ -83,6 +48,44 @@ const ActivityAdmin: React.FC = () => {
   }
   // 渲染活动菜单
   const activityMenu = activityList ? activityList.map((item) => ({label: item.name, key: item.id})) : []
+  // 获取当前活动期数
+  const currentReqActivity = reqActivity ?? activityList?.at(0)
+
+  const handleConfirmModifyReason = async () => {
+    setModifyReasonDrawerVisible(false)
+    const res = await modifyFailReason(currentReqActivity?.id as number, currentRow?.studentNumber as string, failReason)
+    if (!res.success) {
+      message.error('编辑匹配失败原因失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('编辑匹配失败原因成功', SUCCESS_MESSAGE_DURATION);
+    }
+
+    setCurrentRow(undefined)
+    setFailReason('')
+    actionRef?.current?.reloadAndRest?.()
+  }
+
+  const handleOutPool = async (out: number, record: MatchResultItem) => {
+    const res = await outPool(currentReqActivity?.id as number, record.studentNumber as string, out)
+    if (!res.success) {
+      message.error('出/入库失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('出/入库成功', SUCCESS_MESSAGE_DURATION);
+    }
+
+    actionRef?.current?.reloadAndRest?.()
+  }
+
+  const handleEditTwc = async (choice: number, record: MatchResultItem) => {
+    const res = await editTwc(currentReqActivity?.id as number, record.studentNumber as string, choice)
+    if (!res.success) {
+      message.error('修改双选操作失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('修改双选操作成功', SUCCESS_MESSAGE_DURATION);
+    }
+
+    actionRef?.current?.reloadAndRest?.()
+  }
 
   // 获取表格信息
   const fetchTableInfo = async (
@@ -91,7 +94,7 @@ const ActivityAdmin: React.FC = () => {
     const res = await getActivityMatchInfo({
       ...params,
       type: reqType,
-      activityId: reqActivity?.id,
+      activityId: currentReqActivity?.id,
       pageIndex: params.current,
       pageSize: params.pageSize,
     });
@@ -171,7 +174,7 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.success?.answerDay.toString() === value,
+      onFilter: (value, record) => record.answerDay?.toString() === value,
       filteredValue: filteredInfo.successfulAnswerDay || null,
     },
     {
@@ -193,7 +196,7 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.success?.twc.toString() === value,
+      onFilter: (value, record) => record.twc?.toString() === value,
       filteredValue: filteredInfo.successfulTwc || null,
     },
     {
@@ -209,7 +212,7 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.success?.twcResult.toString() === value,
+      onFilter: (value, record) => record.twcResult?.toString() === value,
       filteredValue: filteredInfo.successfulTwcResult || null,
     },
     {
@@ -319,12 +322,12 @@ const ActivityAdmin: React.FC = () => {
       hideInForm: true,
       hideInSearch: true,
       renderText: (_, item) => {
-        return `${item.fail?.proportion ? Math.round(item.fail?.proportion) : 'NaN'}%`
+        return `${item.proportion ? Math.round(item.proportion) : 'NaN'}%`
       },
       sorter: (o1, o2) => {
-        if (!o1.fail?.proportion) return -1;
-        else if (!o2.fail?.proportion) return 1;
-        else return o1.fail?.proportion - o2.fail?.proportion
+        if (!o1.proportion) return -1;
+        else if (!o2.proportion) return 1;
+        else return o1.proportion - o2.proportion
       },
       sortOrder: sortedInfo.columnKey === 'failProportion' ? sortedInfo.order : null,
     },
@@ -432,7 +435,7 @@ const ActivityAdmin: React.FC = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => [
+      render: () => [
         <a
           key="refund"
           onClick={() => {
@@ -571,7 +574,6 @@ const ActivityAdmin: React.FC = () => {
         search={{
           labelWidth: 'auto',
         }}
-        postData={(data) => data.map(item => ({...item, ...item.success, ...item.fail}))}
         toolbar={{
           filter: (
             <Radio.Group buttonStyle="solid"
@@ -595,15 +597,18 @@ const ActivityAdmin: React.FC = () => {
               overlay={
                 <Menu
                   onClick={(e) => {
-                    setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)))
+                    const selectedActivity = activityList?.find((item) => item.id === parseInt(e.key))
+                    if(selectedActivity?.id !== currentReqActivity?.id) {
+                      setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)))
+                      actionRef?.current?.reloadAndRest?.()
+                    }
                   }}
                   items={activityMenu}
-                >
-                </Menu>
+                 />
               }
             >
               <Button>
-                {reqActivity ? reqActivity.name : '选择活动'}
+                {currentReqActivity ? currentReqActivity.name : '选择活动'}
                 <DownOutlined
                   style={{
                     marginLeft: 8,
@@ -626,7 +631,7 @@ const ActivityAdmin: React.FC = () => {
           setMatchDetailDrawerVisible(false)
           setCurrentRow(undefined)
         }}
-        activity={reqActivity}
+        activity={currentReqActivity}
         values={currentRow}
       />
       <DailyQuestions
@@ -635,7 +640,7 @@ const ActivityAdmin: React.FC = () => {
           setDailyQuestionDrawerVisible(false)
           setCurrentRow(undefined)
         }}
-        activity={reqActivity}
+        activity={currentReqActivity}
         values={currentRow}
       />
       <Drawer
