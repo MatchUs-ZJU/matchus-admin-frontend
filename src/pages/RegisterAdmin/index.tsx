@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
-import { ProTable} from "@ant-design/pro-table";
-import type {ProColumns,ActionType} from "@ant-design/pro-table";
+import {ProTable} from "@ant-design/pro-table";
+import type {ProColumns, ActionType} from "@ant-design/pro-table";
 import {
   Alert,
   Button,
@@ -33,6 +33,7 @@ import {getGenderText, getUserTypeText} from "@/utils/format";
 import {useRequest} from "@@/plugin-request/request";
 import {getFacultyList} from "@/services/faculty";
 import {PageLoading} from "@ant-design/pro-components";
+import {numberFilter, stringSorter} from "@/utils/utils";
 
 
 const RegisterAdmin: React.FC = () => {
@@ -42,7 +43,7 @@ const RegisterAdmin: React.FC = () => {
   const [identifyDrawerVisible, setIdentifyDrawerVisible] = useState<boolean>(false);
   const [identifyDenyReasonModalVisible, setIdentifyDenyReasonModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<UserRegisterInfoItem>();
-  const [denyReason, setDenyReason] = useState<string>('');
+  const [denyReason, setDenyReason] = useState<number>(0);
 
   // FETCH 学院信息
   const {loading, data: faculties} = useRequest(getFacultyList, {
@@ -50,19 +51,18 @@ const RegisterAdmin: React.FC = () => {
   })
 
   if (loading) {
-    return <PageLoading />
+    return <PageLoading/>
   }
 
   const handleIdentifyPass = async () => {
     setIdentifyDrawerVisible(false)
     const res = await checkRegisterInfo(currentRow?.id as string, IDENTIFY_PASS)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('审核用户失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('审核用户成功', SUCCESS_MESSAGE_DURATION);
     }
 
-    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
@@ -70,27 +70,23 @@ const RegisterAdmin: React.FC = () => {
     setIdentifyDrawerVisible(false)
     setIdentifyDenyReasonModalVisible(false)
     const res = await checkRegisterInfo(currentRow?.id as string, IDENTIFY_NOT_PASS, denyReason)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('审核用户失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('审核用户成功', SUCCESS_MESSAGE_DURATION);
     }
 
-    setDenyReason('')
-    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
   const handleEditRegisterForm = async (values: any) => {
     setEditDrawerVisible(false)
     const res = await editRegisterInfo(currentRow?.id as string, values)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('编辑用户注册信息失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('编辑用户注册信息成功', SUCCESS_MESSAGE_DURATION);
     }
-
-    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
@@ -102,7 +98,9 @@ const RegisterAdmin: React.FC = () => {
     {
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber)
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      }
     },
     {
       title: '性别',
@@ -119,7 +117,9 @@ const RegisterAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      }
     },
     {
       title: '手机号',
@@ -146,6 +146,10 @@ const RegisterAdmin: React.FC = () => {
           status: 'Success',
         },
       },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string)
+      }
     },
     {
       title: '个人信息',
@@ -161,7 +165,9 @@ const RegisterAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.isComplete.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.isComplete, value as string)
+      }
     },
     {
       title: '注册审核状态',
@@ -185,7 +191,9 @@ const RegisterAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.identified.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.identified, value as string)
+      }
     },
     {
       title: '操作',
@@ -282,7 +290,7 @@ const RegisterAdmin: React.FC = () => {
                 : currentRow?.identified as number === IDENTIFY_STATUS.IDENTIFYING ? 'warning'
                   : 'info'
           }
-          showIcon closable
+          showIcon
         />
         <Row>
           <Col span={24}>
@@ -324,19 +332,22 @@ const RegisterAdmin: React.FC = () => {
       <Modal title='请选择失败理由'
              visible={identifyDenyReasonModalVisible}
              onCancel={() => {
-               setDenyReason('')
+               setDenyReason(0)
                setIdentifyDenyReasonModalVisible(false)
              }}
              onOk={handleIdentifyDeny}
+             afterClose={() => {
+               setDenyReason(0)
+             }}
       >
         {
           identifyDenyReasonModalVisible &&
           <Select placeholder='请选择失败理由' style={{width: "300px"}} onChange={(v) => setDenyReason(v)}>
-            <Select.Option value="关键信息有遮挡">关键信息有遮挡</Select.Option>
-            <Select.Option value="学号填写错误">学号填写错误</Select.Option>
-            <Select.Option value="姓名不符合要求">姓名不符合要求</Select.Option>
-            <Select.Option value="用户类型不符">用户类型不符</Select.Option>
-            <Select.Option value="学院不符">学院不符</Select.Option>
+            <Select.Option value={1}>关键信息有遮挡</Select.Option>
+            <Select.Option value={2}>学号填写错误</Select.Option>
+            <Select.Option value={3}>姓名不符合要求</Select.Option>
+            <Select.Option value={4}>用户类型不符</Select.Option>
+            <Select.Option value={5}>学院不符</Select.Option>
           </Select>
         }
       </Modal>

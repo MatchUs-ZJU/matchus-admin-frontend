@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
 import {ActionType, ColumnsState, ProTable} from "@ant-design/pro-table";
 import type {ProColumns} from "@ant-design/pro-table";
-import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message} from "antd";
+import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message, Alert} from "antd";
 import {EditOutlined, ExportOutlined} from "@ant-design/icons";
 import {PersonInfoItem} from "@/pages/PersonAdmin/data";
 import {getPersonalInfo, rateAppearance} from "@/services/users";
@@ -12,6 +12,7 @@ import {getGenderText, getUserTypeText} from "@/utils/format";
 import {useRequest} from "@@/plugin-request/request";
 import {getFacultyList} from "@/services/faculty";
 import {PageLoading} from "@ant-design/pro-components";
+import {numberFilter, numberSorter, stringSorter} from "@/utils/utils";
 
 const columnAttrList = [
   {column: '生日', dataIndex: 'birth'},
@@ -85,7 +86,7 @@ const PersonAdmin: React.FC = () => {
 
     if (notCorrect) {
       const res = await rateAppearance(currentRow?.id as string, -1)
-      if (!res.success) {
+      if (!res || !res.success) {
         message.error('颜值打分失败', FAIL_MESSAGE_DURATION);
       } else {
         message.success('颜值打分成功', SUCCESS_MESSAGE_DURATION);
@@ -93,7 +94,7 @@ const PersonAdmin: React.FC = () => {
     } else {
       if (currentRating !== 0) {
         const res = await rateAppearance(currentRow?.id as string, currentRating)
-        if (!res.success) {
+        if (!res || !res.success) {
           message.error('颜值打分失败', FAIL_MESSAGE_DURATION);
         } else {
           message.success('颜值打分成功', SUCCESS_MESSAGE_DURATION);
@@ -103,8 +104,6 @@ const PersonAdmin: React.FC = () => {
       }
     }
 
-    setCurrentRow(undefined)
-    setCurrentRating(0)
     actionRef?.current?.reloadAndRest?.()
   }
 
@@ -167,9 +166,13 @@ const PersonAdmin: React.FC = () => {
           text: '前70-100%',
         },
       },
-      sorter: (o1, o2) => o2.appearance - o1.appearance,
+      sorter: (o1, o2) => {
+        return numberSorter(o1.appearance, o2.appearance)
+      },
       filters: true,
-      onFilter: (value, record) => record.appearance.toString() === value,
+      onFilter: (value, record) => {
+        return numberFilter(record.appearance, value as string)
+      },
       fixed: 'left',
       width: 150
     },
@@ -188,7 +191,9 @@ const PersonAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value,
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      },
       fixed: 'left',
       width: 150
     },
@@ -221,7 +226,9 @@ const PersonAdmin: React.FC = () => {
     {
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber),
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      }
     },
     {
       title: '学院',
@@ -236,13 +243,12 @@ const PersonAdmin: React.FC = () => {
     columns.push({
       title: columnAttr.column,
       dataIndex: columnAttr.dataIndex,
-      key: columnAttr.dataIndex,
     })
   })
 
-
   return (
     <PageContainer>
+      <Alert message="点击右侧齿轮，配置更多列信息内容" type="info" showIcon closable style={{marginBottom: '16px'}}/>
       <ProTable
         <PersonInfoItem>
         headerTitle='个人信息表格'
@@ -313,6 +319,9 @@ const PersonAdmin: React.FC = () => {
         }}
         visible={ratingDrawerVisible}
         bodyStyle={{paddingBottom: 80}}
+        afterVisibleChange={() => {
+          setCurrentRating(0)
+        }}
       >
         <Row>
           <Col span={24}>

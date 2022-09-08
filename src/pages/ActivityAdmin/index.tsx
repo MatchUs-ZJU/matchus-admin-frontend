@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
 import type {ActionType, ProColumns} from "@ant-design/pro-table";
-import { ProTable} from "@ant-design/pro-table";
+import {ProTable} from "@ant-design/pro-table";
 import type {ActivityItem,} from "@/pages/data";
 import {Button, Menu, Dropdown, Radio, Tag, Drawer, Select, message, Popconfirm} from "antd";
 import {DownOutlined} from "@ant-design/icons";
@@ -13,6 +13,7 @@ import {CHOOSE, FAIL_MESSAGE_DURATION, NOT_CHOOSE, SUCCESS_MESSAGE_DURATION} fro
 import type {FilterValue, SorterResult} from "antd/es/table/interface";
 import MatchDetail from "@/pages/ActivityAdmin/MatchDetail";
 import DailyQuestions from "@/pages/ActivityAdmin/DailyQuestions";
+import {numberFilter, numberSorter, stringSorter} from "@/utils/utils";
 
 const MatchSuccessType = 0, MatchFailType = 1, MatchOutType = 2, MatchNoResultType = 3
 const IN_POOL = 0, OUT_POOL = 1
@@ -54,20 +55,18 @@ const ActivityAdmin: React.FC = () => {
   const handleConfirmModifyReason = async () => {
     setModifyReasonDrawerVisible(false)
     const res = await modifyFailReason(currentReqActivity?.id as number, currentRow?.studentNumber as string, failReason)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('编辑匹配失败原因失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('编辑匹配失败原因成功', SUCCESS_MESSAGE_DURATION);
     }
 
-    setCurrentRow(undefined)
-    setFailReason('')
     actionRef?.current?.reloadAndRest?.()
   }
 
   const handleOutPool = async (out: number, record: MatchResultItem) => {
     const res = await outPool(currentReqActivity?.id as number, record.studentNumber as string, out)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('出/入库失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('出/入库成功', SUCCESS_MESSAGE_DURATION);
@@ -78,7 +77,7 @@ const ActivityAdmin: React.FC = () => {
 
   const handleEditTwc = async (choice: number, record: MatchResultItem) => {
     const res = await editTwc(currentReqActivity?.id as number, record.studentNumber as string, choice)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('修改双选操作失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('修改双选操作成功', SUCCESS_MESSAGE_DURATION);
@@ -99,7 +98,7 @@ const ActivityAdmin: React.FC = () => {
       pageSize: params.pageSize,
     });
 
-    if (res.success) {
+    if (res && res.success) {
       return {
         data: res.data.records,
         success: true,
@@ -116,20 +115,19 @@ const ActivityAdmin: React.FC = () => {
   // 匹配成功表格信息
   const successfulColumns: ProColumns<MatchResultItem> [] = [
     {
-      key: 'successfulName',
       title: '姓名',
       dataIndex: 'name',
     },
     {
-      key: 'successfulStudentNumber',
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber),
-      sortOrder: sortedInfo.columnKey === 'successfulStudentNumber' ? sortedInfo.order : null,
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      },
+      sortOrder: sortedInfo.columnKey === 'studentNumber' ? sortedInfo.order : null,
     },
     {
       title: '性别',
-      key: 'successfulGender',
       dataIndex: 'gender',
       valueEnum: {
         0: {
@@ -143,8 +141,10 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value,
-      filteredValue: filteredInfo.successfulGender || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      },
+      filteredValue: filteredInfo.gender || null,
     },
     {
       title: '匹配对象',
@@ -153,7 +153,6 @@ const ActivityAdmin: React.FC = () => {
       hideInSearch: true
     },
     {
-      key: 'successfulAnswerDay',
       title: '回答天数',
       dataIndex: 'answerDay',
       valueEnum: {
@@ -174,11 +173,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.answerDay?.toString() === value,
-      filteredValue: filteredInfo.successfulAnswerDay || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.answerDay, value as string)
+      },
+      filteredValue: filteredInfo.answerDay || null,
     },
     {
-      key: 'successfulTwc',
       title: '双选操作',
       dataIndex: 'twc',
       valueEnum: {
@@ -196,11 +196,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.twc?.toString() === value,
-      filteredValue: filteredInfo.successfulTwc || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.twc, value as string)
+      },
+      filteredValue: filteredInfo.twc || null,
     },
     {
-      key: 'successfulTwcResult',
       title: '双选结果',
       dataIndex: 'twcResult',
       valueEnum: {
@@ -212,11 +213,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.twcResult?.toString() === value,
-      filteredValue: filteredInfo.successfulTwcResult || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.twcResult, value as string)
+      },
+      filteredValue: filteredInfo.twcResult || null,
     },
     {
-      key: 'successfulRefund',
       title: '退款结果',
       dataIndex: 'refund',
       valueEnum: {
@@ -230,8 +232,10 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.refund.toString() === value,
-      filteredValue: filteredInfo.successfulRefund || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.refund, value as string)
+      },
+      filteredValue: filteredInfo.refund || null,
     },
     {
       title: '操作',
@@ -285,19 +289,18 @@ const ActivityAdmin: React.FC = () => {
   // 匹配失败表格信息
   const failColumns: ProColumns<MatchResultItem> [] = [
     {
-      key: 'failName',
       title: '姓名',
       dataIndex: 'name',
     },
     {
-      key: 'failStudentNumber',
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber),
-      sortOrder: sortedInfo.columnKey === 'failStudentNumber' ? sortedInfo.order : null,
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      },
+      sortOrder: sortedInfo.columnKey === 'studentNumber' ? sortedInfo.order : null,
     },
     {
-      key: 'failGender',
       title: '性别',
       dataIndex: 'gender',
       valueEnum: {
@@ -312,11 +315,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value,
-      filteredValue: filteredInfo.failGender || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      },
+      filteredValue: filteredInfo.gender || null,
     },
     {
-      key: 'failProportion',
       title: '匹配人数比例',
       dataIndex: 'proportion',
       hideInForm: true,
@@ -325,11 +329,9 @@ const ActivityAdmin: React.FC = () => {
         return `${item.proportion ? Math.round(item.proportion) : 'NaN'}%`
       },
       sorter: (o1, o2) => {
-        if (!o1.proportion) return -1;
-        else if (!o2.proportion) return 1;
-        else return o1.proportion - o2.proportion
+        return numberSorter(o1.proportion!, o2.proportion!)
       },
-      sortOrder: sortedInfo.columnKey === 'failProportion' ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === 'proportion' ? sortedInfo.order : null,
     },
     {
       title: '失败原因',
@@ -338,7 +340,6 @@ const ActivityAdmin: React.FC = () => {
       hideInSearch: true,
     },
     {
-      key: 'failRefund',
       title: '退款结果',
       dataIndex: 'refund',
       valueEnum: {
@@ -352,8 +353,10 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.refund.toString() === value,
-      filteredValue: filteredInfo.failRefund || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.refund, value as string)
+      },
+      filteredValue: filteredInfo.refund || null,
     },
     {
       title: '操作',
@@ -383,19 +386,18 @@ const ActivityAdmin: React.FC = () => {
   // 出库用户表格信息
   const outColumns: ProColumns<MatchResultItem> [] = [
     {
-      key: 'outName',
       title: '姓名',
       dataIndex: 'name',
     },
     {
-      key: 'outStudentNumber',
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber),
-      sortOrder: sortedInfo.columnKey === 'outStudentNumber' ? sortedInfo.order : null,
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      },
+      sortOrder: sortedInfo.columnKey === 'studentNumber' ? sortedInfo.order : null,
     },
     {
-      key: 'outGender',
       title: '性别',
       dataIndex: 'gender',
       valueEnum: {
@@ -410,11 +412,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value,
-      filteredValue: filteredInfo.outGender || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      },
+      filteredValue: filteredInfo.gender || null,
     },
     {
-      key: 'outRefund',
       title: '退款结果',
       dataIndex: 'refund',
       valueEnum: {
@@ -428,8 +431,10 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.refund.toString() === value,
-      filteredValue: filteredInfo.outRefund || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.refund, value as string)
+      },
+      filteredValue: filteredInfo.refund || null,
     },
     {
       title: '操作',
@@ -450,19 +455,18 @@ const ActivityAdmin: React.FC = () => {
   // 匹配结果未出表格信息
   const noResultColumns: ProColumns<MatchResultItem> [] = [
     {
-      key: 'noResultName',
       title: '姓名',
       dataIndex: 'name',
     },
     {
-      key: 'noResultStudentNumber',
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber),
-      sortOrder: sortedInfo.columnKey === 'noResultStudentNumber' ? sortedInfo.order : null,
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      },
+      sortOrder: sortedInfo.columnKey === 'studentNumber' ? sortedInfo.order : null,
     },
     {
-      key: 'noResultGender',
       title: '性别',
       dataIndex: 'gender',
       valueEnum: {
@@ -477,11 +481,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value,
-      filteredValue: filteredInfo.noResultGender || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      },
+      filteredValue: filteredInfo.gender || null,
     },
     {
-      key: 'noResultSurveyComplete',
       title: '问卷填写',
       dataIndex: 'surveyComplete',
       valueEnum: {
@@ -499,11 +504,12 @@ const ActivityAdmin: React.FC = () => {
         }
       },
       filters: true,
-      onFilter: (value, record) => record.surveyComplete.toString() === value,
-      filteredValue: filteredInfo.noResultSurveyComplete || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.surveyComplete, value as string)
+      },
+      filteredValue: filteredInfo.surveyComplete || null,
     },
     {
-      key: 'noResultOut',
       title: '参与/是否出库',
       dataIndex: 'out',
       valueEnum: {
@@ -517,11 +523,12 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.out.toString() === value,
-      filteredValue: filteredInfo.noResultOut || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.out, value as string)
+      },
+      filteredValue: filteredInfo.out || null,
     },
     {
-      key: 'noResultRefund',
       title: '退款结果',
       dataIndex: 'refund',
       valueEnum: {
@@ -535,8 +542,10 @@ const ActivityAdmin: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.refund.toString() === value,
-      filteredValue: filteredInfo.noResultRefund || null,
+      onFilter: (value, record) => {
+        return numberFilter(record.refund, value as string)
+      },
+      filteredValue: filteredInfo.refund || null,
     },
     {
       title: '操作',
@@ -598,13 +607,13 @@ const ActivityAdmin: React.FC = () => {
                 <Menu
                   onClick={(e) => {
                     const selectedActivity = activityList?.find((item) => item.id === parseInt(e.key))
-                    if(selectedActivity?.id !== currentReqActivity?.id) {
+                    if (selectedActivity?.id !== currentReqActivity?.id) {
                       setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)))
                       actionRef?.current?.reloadAndRest?.()
                     }
                   }}
                   items={activityMenu}
-                 />
+                />
               }
             >
               <Button>
@@ -649,6 +658,9 @@ const ActivityAdmin: React.FC = () => {
         onClose={() => {
           setModifyReasonDrawerVisible(false)
           setCurrentRow(undefined)
+          setFailReason('')
+        }}
+        afterVisibleChange={()=>{
           setFailReason('')
         }}
         visible={modifyReasonDrawerVisible}

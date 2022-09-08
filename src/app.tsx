@@ -7,7 +7,7 @@ import {history} from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import {RequestConfig} from "@@/plugin-request/request";
 import UnAccessiblePage from "@/pages/403";
-import {authHeaderInterceptor, getToken, removeToken} from "@/services/utils";
+import {authHeaderInterceptor, getToken, parseResponseInterceptor} from "@/services/utils";
 import {ResponseError} from "umi-request";
 import {message} from "antd";
 import {loginPath} from "@/utils/constant";
@@ -32,17 +32,13 @@ export const request: RequestConfig = {
       };
     },
   },
-  errorHandler: async (error: ResponseError<any>) => {
-    const msg = (error.data.msg && error.data.msg !== '') ? error.data.msg : '服务器内部错误'
-    message.error(`${error.message}: ${msg}`)
-
-    if (error.data.code === 1002) {
-      removeToken()
-      history.push(loginPath)
-    }
+  errorHandler: async (error: ResponseError) => {
+    const errorStatus = error.response?.status
+    const errorStatusText = error.response?.statusText
+    await message.error(`网络请求失败: ${errorStatus ? (errorStatus + ' - ' + errorStatusText) : '服务器内部错误'}`)
   },
   requestInterceptors: [authHeaderInterceptor],
-  responseInterceptors: []
+  responseInterceptors: [parseResponseInterceptor]
 }
 
 export async function getInitialState(): Promise<{

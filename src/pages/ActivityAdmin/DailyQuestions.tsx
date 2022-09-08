@@ -75,8 +75,8 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
              fontWeight: 'bold',
            }}
       >
-        <Col span={10}>{values?.name}</Col>
-        <Col span={10}>{values?.matchName}</Col>
+        <Col span={10}>我：{values?.name}</Col>
+        <Col span={10}>Ta：{values?.matchName}</Col>
       </Row>
       <Divider/>
       {
@@ -87,10 +87,10 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
                 <Col span={10}>
                   <Row
                     style={{fontSize: '14px', lineHeight: '24px', fontWeight: 'bold'}}>Day {value.user?.index}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>Ta的提问: {value.matchUser?.question}</Row>
+                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>Ta的提问: {value.user?.question}</Row>
                   <Row style={{fontSize: '14px', lineHeight: '24px'}}>我的回答: {value.user?.answer}</Row>
                   {
-                    value.matchUser?.like ? <LikeFilled
+                    value.user?.like ? <LikeFilled
                         style={{color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
                       : <LikeOutlined style={{fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
                   }
@@ -98,10 +98,10 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
                 <Col span={10}>
                   <Row
                     style={{fontSize: '14px', lineHeight: '24px', fontWeight: 'bold'}}>Day {value.matchUser?.index}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>我的提问: {value.user?.question}</Row>
+                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>我的提问: {value.matchUser?.question}</Row>
                   <Row style={{fontSize: '14px', lineHeight: '24px'}}>Ta的回答: {value.matchUser?.answer}</Row>
                   {
-                    value.user?.like ? <LikeFilled
+                    value.matchUser?.like ? <LikeFilled
                         style={{color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
                       : <LikeOutlined style={{fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
                   }
