@@ -59,7 +59,7 @@ const Login: React.FC = () => {
 
     try {
       const res = await login({...values, type});
-      if (res.success && res.data.token) {
+      if (res && res.success && res.data.token) {
         message.success(intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',

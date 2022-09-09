@@ -7,7 +7,7 @@ import {history} from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import {RequestConfig} from "@@/plugin-request/request";
 import UnAccessiblePage from "@/pages/403";
-import {authHeaderInterceptor, getToken, removeToken} from "@/services/utils";
+import {authHeaderInterceptor, getToken, parseResponseInterceptor, removeToken} from "@/services/utils";
 import {ResponseError} from "umi-request";
 import {message} from "antd";
 import {loginPath} from "@/utils/constant";
@@ -32,17 +32,23 @@ export const request: RequestConfig = {
       };
     },
   },
-  errorHandler: async (error: ResponseError<any>) => {
-    const msg = (error.data.msg && error.data.msg !== '') ? error.data.msg : '服务器内部错误'
-    message.error(`${error.message}: ${msg}`)
-
-    if (error.data.code === 1002) {
-      removeToken()
-      history.push(loginPath)
+  errorHandler: async (error: ResponseError) => {
+    if(error.name === 'BizError' && !error.data.success) {
+      const resData = error.data
+      await message.error(`业务请求失败: ${resData.code ? (resData.code + ' - ' + resData.msg) : '服务器业务发生不明错误'}`)
+      // 鉴权失败
+      if(resData.code === '1002') {
+        await message.warn('登录状态过期，请重新登录')
+        removeToken()
+        history.push(loginPath)
+      }
+    } else if(error.name === 'ResponseError') {
+      const errorStatus = error.response?.status
+      const errorStatusText = error.response?.statusText
+      await message.error(`网络请求失败: ${errorStatus ? (errorStatus + ' - ' + errorStatusText) : '网络或服务器内部发生不明错误'}`)
     }
   },
   requestInterceptors: [authHeaderInterceptor],
-  responseInterceptors: []
 }
 
 export async function getInitialState(): Promise<{

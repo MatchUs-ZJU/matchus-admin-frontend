@@ -12,6 +12,7 @@ import {
   REMOVE_BLACK_LIST,
   SUCCESS_MESSAGE_DURATION
 } from "@/utils/constant";
+import {numberFilter, stringSorter} from "@/utils/utils";
 
 
 const UserGeneral: React.FC = () => {
@@ -24,42 +25,42 @@ const UserGeneral: React.FC = () => {
   const handleConfirmDelete = async () => {
     setConfirmDeleteModalVisible(false)
     const res = await deleteUser(currentRow?.id as number)
-    if (!res.success) {
+    if (!res || !res.success) {
       message.error('删除用户失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('删除用户成功', SUCCESS_MESSAGE_DURATION);
     }
-    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
   const handleConfirmEditBlackList = async () => {
     setConfirmEditBlackListModalVisible(false)
     const res = await editBlackList(currentRow?.id as number, currentRow?.isBlack ? REMOVE_BLACK_LIST : ADD_BLACK_LIST)
-    if (!res.success) {
-      message.error('编辑黑名单失败', FAIL_MESSAGE_DURATION);
-    } else {
+    if (res && res.success) {
       message.success('编辑黑名单成功', SUCCESS_MESSAGE_DURATION);
+    } else {
+      message.error('编辑黑名单失败', FAIL_MESSAGE_DURATION);
     }
-    setCurrentRow(undefined)
     actionRef?.current?.reloadAndRest?.()
   }
 
   const columns: ProColumns<UserGeneralInfoItem>[] = [
     {
       title: '昵称',
-      dataIndex: 'nickName',
+      dataIndex: 'nickname',
       fixed: 'left'
     },
     {
       title: '姓名',
-      dataIndex: 'realName',
+      dataIndex: 'realname',
       fixed: 'left'
     },
     {
       title: '学号',
       dataIndex: 'studentNumber',
-      sorter: (o1, o2) => o1.studentNumber.localeCompare(o2.studentNumber)
+      sorter: (o1, o2) => {
+        return stringSorter(o1.studentNumber, o2.studentNumber)
+      }
     },
     {
       title: '性别',
@@ -76,7 +77,9 @@ const UserGeneral: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.gender.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.gender, value as string)
+      }
     },
     {
       title: '手机号',
@@ -103,6 +106,10 @@ const UserGeneral: React.FC = () => {
           status: 'Success',
         },
       },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string)
+      }
     },
     {
       title: '注册审核状态',
@@ -126,7 +133,9 @@ const UserGeneral: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.identified.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.identified, value as string)
+      }
     },
     {
       title: '注册材料',
@@ -149,7 +158,9 @@ const UserGeneral: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.isComplete.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.isComplete, value as string)
+      }
     },
     {
       title: '活动信息',
@@ -164,7 +175,8 @@ const UserGeneral: React.FC = () => {
       }),
       filterMultiple: false,
       onFilter: (value, record) => {
-        return record.activityList.includes(value as number)
+        if (record.activityList == null) return false
+        else return record.activityList.includes(value as number)
       },
       render: (_, {activityList}) => (
         <>
@@ -192,7 +204,9 @@ const UserGeneral: React.FC = () => {
         },
       },
       filters: true,
-      onFilter: (value, record) => record.isBlack.toString() === value
+      onFilter: (value, record) => {
+        return numberFilter(record.isBlack, value as string)
+      }
     },
     {
       title: '操作',
@@ -204,11 +218,11 @@ const UserGeneral: React.FC = () => {
         <a
           key="delete"
           onClick={() => {
-            setConfirmDeleteModalVisible(true)
-            setCurrentRow(record)
+            // setConfirmDeleteModalVisible(true)
+            // setCurrentRow(record)
           }}
         >
-          删除
+          <span style={{color: '#808080'}}>删除</span>
         </a>,
         <a
           key="editBlackList"
@@ -235,7 +249,7 @@ const UserGeneral: React.FC = () => {
         search={{
           labelWidth: 'auto',
         }}
-        scroll={{ x: 2000 }}
+        scroll={{x: 2000}}
         toolBarRender={() => [
           <Button
             type="primary"
@@ -278,18 +292,18 @@ const UserGeneral: React.FC = () => {
              okText='确认'
              cancelText='取消'
       >
-        确认删除该用户：姓名-{currentRow?.realName} 学号-{currentRow?.studentNumber} ?
+        确认删除该用户：姓名-{currentRow?.realname} 学号-{currentRow?.studentNumber} ?
       </Modal>
       <Modal title={`将用户${currentRow?.isBlack ? '移除' : '加入'}黑名单`} visible={confirmEditBlackListModalVisible}
              onOk={handleConfirmEditBlackList}
              onCancel={() => {
-               setCurrentRow(undefined)
                setConfirmEditBlackListModalVisible(false)
+               setCurrentRow(undefined)
              }}
              okText='确认'
              cancelText='取消'
       >
-        确认将该用户{currentRow?.isBlack ? '移除' : '加入'}黑名单：姓名-{currentRow?.realName} 学号-{currentRow?.studentNumber} ?
+        确认将该用户{currentRow?.isBlack ? '移除' : '加入'}黑名单：姓名-{currentRow?.realname} 学号-{currentRow?.studentNumber} ?
       </Modal>
     </PageContainer>
   )

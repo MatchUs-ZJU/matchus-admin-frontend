@@ -33,7 +33,7 @@ export function getUserGeneralInfo(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseData<{ records: UserGeneralInfoItem[] } & API.PaginationResult>>(`${BASE_URL}/user/info`, {
+  return request<API.ResponseData<{ records: UserGeneralInfoItem[] } & API.PaginationResult>>(`${BASE_URL}/register/info`, {
     method: 'GET',
     params: {
       ...params,
@@ -55,7 +55,7 @@ export async function deleteUser(id: string | number, options?: { [key: string]:
 export async function editBlackList(id: string | number, operation: number, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/user/blacklist`, {
     method: 'POST',
-    params: {
+    data: {
       userId: id,
       isBlack: operation
     },
@@ -91,7 +91,7 @@ export async function getUserRegisterInfo(
   });
 }
 
-export async function checkRegisterInfo(id: string | number, identified: number, reason?: string, options?: { [key: string]: any }) {
+export async function checkRegisterInfo(id: string | number, identified: number, reason?: number, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/register/check`, {
     method: 'POST',
     data: {id, identified, reason},

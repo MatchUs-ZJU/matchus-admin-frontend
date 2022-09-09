@@ -19,9 +19,10 @@ const MatchDetail = (props: MatchDetailProps) => {
   // FETCH 用户个人信息
   const {loading, error, data: userInfo} =
     useRequest(() => {
-      return getUserMatchInfo({activityId: activity?.id as number, studentNumber: values?.studentNumber as string})
+        return getUserMatchInfo({activityId: activity?.id as number, studentNumber: values?.studentNumber as string})
     }, {
-      formatResult: res => res?.data.matchInfo.info
+      formatResult: res => res?.data.matchInfo.info,
+      ready: visible
     })
 
   if (error) {

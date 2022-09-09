@@ -1,4 +1,8 @@
 import {RequestConfig} from "@@/plugin-request/request";
+import {loginPath} from "@/utils/constant";
+import {message} from "antd";
+import {history} from 'umi';
+import {ResponseError} from "umi-request";
 
 export const BASE_URL = '/api/admin'
 
@@ -15,16 +19,16 @@ export const removeToken = () => {
 }
 
 export const authHeaderInterceptor = (url: string, options: RequestConfig) => {
-  if(url === `${BASE_URL}/login`) {
+  if (url === `${BASE_URL}/login`) {
     return {
       url,
-      options: { ...options },
+      options: {...options},
     };
   }
 
-  const authHeader = { Authorization: getToken() };
+  const authHeader = {Authorization: getToken()};
   return {
     url,
-    options: { ...options, interceptors: true, headers: authHeader },
+    options: {...options, interceptors: true, headers: authHeader},
   };
 };
