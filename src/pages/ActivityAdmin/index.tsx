@@ -634,24 +634,30 @@ const ActivityAdmin: React.FC = () => {
         request={fetchTableInfo}
         columns={reqType === MatchSuccessType ? successfulColumns : reqType === MatchFailType ? failColumns : reqType === MatchOutType ? outColumns : noResultColumns}
       />
-      <MatchDetail
-        visible={matchDetailDrawerVisible}
-        onClose={() => {
-          setMatchDetailDrawerVisible(false)
-          setCurrentRow(undefined)
-        }}
-        activity={currentReqActivity}
-        values={currentRow}
-      />
-      <DailyQuestions
-        visible={dailyQuestionDrawerVisible}
-        onClose={() => {
-          setDailyQuestionDrawerVisible(false)
-          setCurrentRow(undefined)
-        }}
-        activity={currentReqActivity}
-        values={currentRow}
-      />
+      {
+        matchDetailDrawerVisible &&
+        <MatchDetail
+          visible={matchDetailDrawerVisible}
+          onClose={() => {
+            setMatchDetailDrawerVisible(false)
+            setCurrentRow(undefined)
+          }}
+          activity={currentReqActivity}
+          values={currentRow}
+        />
+      }
+      {
+        dailyQuestionDrawerVisible &&
+        <DailyQuestions
+          visible={dailyQuestionDrawerVisible}
+          onClose={() => {
+            setDailyQuestionDrawerVisible(false)
+            setCurrentRow(undefined)
+          }}
+          activity={currentReqActivity}
+          values={currentRow}
+        />
+      }
       <Drawer
         title='修改失败理由'
         width={400}
@@ -660,7 +666,7 @@ const ActivityAdmin: React.FC = () => {
           setCurrentRow(undefined)
           setFailReason('')
         }}
-        afterVisibleChange={()=>{
+        afterVisibleChange={() => {
           setFailReason('')
         }}
         visible={modifyReasonDrawerVisible}

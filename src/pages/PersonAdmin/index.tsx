@@ -234,7 +234,7 @@ const PersonAdmin: React.FC = () => {
       title: '学院',
       dataIndex: 'faculty',
       renderText: (_, record) => {
-        return faculties?.[record.faculty as number]?.name
+        return faculties?.[record.faculty as number - 1]?.name
       },
     }
   ]

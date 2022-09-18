@@ -19,8 +19,8 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
 export function getUserGeneralInfo(
   params: {
     id?: number,
-    nickName?: string,
-    realName?: string,
+    nickname?: string,
+    realname?: string,
     studentNumber?: string,
     gender?: number,
     userType?: number,
@@ -67,8 +67,8 @@ export async function editBlackList(id: string | number, operation: number, opti
 export async function getUserRegisterInfo(
   params: {
     id?: number,
-    nickName?: string,
-    realName?: string,
+    nickname?: string,
+    realname?: string,
     studentNumber?: string,
     gender?: number,
     userType?: number,
@@ -114,7 +114,7 @@ export async function editRegisterInfo(id: string | number, formData: any, optio
 export async function getPersonalInfo(
   params: {
     id?: number,
-    realName?: string,
+    realname?: string,
     studentNumber?: string,
     gender?: number,
     userType?: number,

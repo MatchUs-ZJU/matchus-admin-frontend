@@ -314,7 +314,7 @@ const RegisterAdmin: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title='学院' content={faculties?.[currentRow?.faculty as number]?.name}/>
+            <DescriptionItem title='学院' content={faculties?.[currentRow?.faculty as number - 1]?.name}/>
           </Col>
         </Row>
         <Row>
@@ -369,7 +369,7 @@ const RegisterAdmin: React.FC = () => {
           >
             <Form.Item
               label="姓名"
-              name="realName"
+              name="realname"
               rules={[{required: true, message: '姓名不可为空'}]}
             >
               <Input/>
