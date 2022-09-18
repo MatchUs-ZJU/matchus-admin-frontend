@@ -326,7 +326,7 @@ const ActivityAdmin: React.FC = () => {
       hideInForm: true,
       hideInSearch: true,
       renderText: (_, item) => {
-        return `${item.proportion ? Math.round(item.proportion) : 'NaN'}%`
+        return `${item.proportion !== undefined ? Math.round(item.proportion) : 'NaN'}%`
       },
       sorter: (o1, o2) => {
         return numberSorter(o1.proportion!, o2.proportion!)
