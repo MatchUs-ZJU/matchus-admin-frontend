@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
 import {ActionType, ColumnsState, ProTable} from "@ant-design/pro-table";
 import type {ProColumns} from "@ant-design/pro-table";
-import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message, Alert} from "antd";
+import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message, Alert, Modal} from "antd";
 import {EditOutlined, ExportOutlined} from "@ant-design/icons";
 import {PersonInfoItem} from "@/pages/PersonAdmin/data";
 import {getPersonalInfo, rateAppearance} from "@/services/users";
@@ -69,6 +69,7 @@ const PersonAdmin: React.FC = () => {
   const [columnsState, setColumnsState] = useState<Record<string, ColumnsState>>(getInitialColumnsState);
   const [ratingDrawerVisible, setRatingDrawerVisible] = useState<boolean>(false);
   const [detailDrawerVisible, setDetailDrawerVisible] = useState<boolean>(false);
+  const [confirmRatingModalVisible, setConfirmRatingModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<PersonInfoItem>();
   const [currentRating, setCurrentRating] = useState<number>(0);
 
@@ -352,9 +353,7 @@ const PersonAdmin: React.FC = () => {
           <Button type="primary" size='large' style={{width: '96px'}}
                   onClick={() => handleConfirmRating()}>提交</Button>
           <Button type="primary" size='large' style={{width: '96px'}} danger
-                  onClick={async () => {
-                    await handleConfirmRating(true)
-                  }}>不符合</Button>
+                  onClick={() => setConfirmRatingModalVisible(true)}>不符合</Button>
         </Space>
       </Drawer>
       <Drawer
@@ -415,6 +414,19 @@ const PersonAdmin: React.FC = () => {
           })
         }
       </Drawer>
+      <Modal title="用户照片不符合？" visible={confirmRatingModalVisible}
+             onOk={async () => {
+               await handleConfirmRating(true)
+               setConfirmRatingModalVisible(false)
+             }}
+             onCancel={() => {
+               setConfirmRatingModalVisible(false)
+             }}
+             okText='确认'
+             cancelText='取消'
+      >
+        确认该用户照片不符合要求？
+      </Modal>
     </PageContainer>
   )
 }
