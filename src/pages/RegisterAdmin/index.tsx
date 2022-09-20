@@ -67,9 +67,15 @@ const RegisterAdmin: React.FC = () => {
   }
 
   const handleIdentifyDeny = async () => {
+    if(denyReason === 0) {
+      message.error('请选择审核失败原因', FAIL_MESSAGE_DURATION)
+      return
+    }
+
     setIdentifyDrawerVisible(false)
     setIdentifyDenyReasonModalVisible(false)
     const res = await checkRegisterInfo(currentRow?.id as string, IDENTIFY_NOT_PASS, denyReason)
+
     if (!res || !res.success) {
       message.error('审核用户失败', FAIL_MESSAGE_DURATION);
     } else {

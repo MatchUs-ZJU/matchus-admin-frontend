@@ -2,8 +2,8 @@ import React, {useRef, useState} from "react";
 import {PageContainer} from "@ant-design/pro-layout";
 import {ActionType, ColumnsState, ProTable} from "@ant-design/pro-table";
 import type {ProColumns} from "@ant-design/pro-table";
-import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message, Alert, Modal} from "antd";
-import {EditOutlined, ExportOutlined} from "@ant-design/icons";
+import {Radio, Button, Col, Divider, Drawer, Image, Row, Space, message, Alert, Modal, Dropdown, Menu} from "antd";
+import {DownOutlined} from "@ant-design/icons";
 import {PersonInfoItem} from "@/pages/PersonAdmin/data";
 import {getPersonalInfo, rateAppearance} from "@/services/users";
 import {FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION} from "@/utils/constant";
@@ -13,6 +13,8 @@ import {useRequest} from "@@/plugin-request/request";
 import {getFacultyList} from "@/services/faculty";
 import {PageLoading} from "@ant-design/pro-components";
 import {numberFilter, numberSorter, stringSorter} from "@/utils/utils";
+import {getActivityList} from "@/services/activity";
+import {ActivityItem} from "@/pages/data";
 
 const columnAttrList = [
   {column: '生日', dataIndex: 'birth'},
@@ -36,7 +38,7 @@ const columnAttrList = [
   {column: '参与意愿', dataIndex: 'willingness'},
   {column: '恋爱次数', dataIndex: 'loveHistory'},
   {column: '在校生：消费水平', dataIndex: 'consumption'},
-  {column: '在校生：消费分担', dataIndex: 'consumption_share'},
+  {column: '在校生：消费分担', dataIndex: 'consumptionShare'},
   {column: 'MBTI', dataIndex: 'mbti'},
   {column: '校友：学历', dataIndex: 'graduateEducation'},
   {column: '校友：工作岗位', dataIndex: 'graduateWorkLocation'},
@@ -64,8 +66,13 @@ const calcScrollWidth = (columnsState: Record<string, ColumnsState>) => {
   return columnNumber * 200
 }
 
+const sortActivityList = (activityList: ActivityItem[]) => {
+  return activityList.sort((o1, o2) => o2.id - o1.id)
+}
+
 const PersonAdmin: React.FC = () => {
   const actionRef = useRef<ActionType>();
+  const [reqActivity, setReqActivity] = useState<ActivityItem | undefined>(undefined)
   const [columnsState, setColumnsState] = useState<Record<string, ColumnsState>>(getInitialColumnsState);
   const [ratingDrawerVisible, setRatingDrawerVisible] = useState<boolean>(false);
   const [detailDrawerVisible, setDetailDrawerVisible] = useState<boolean>(false);
@@ -74,13 +81,27 @@ const PersonAdmin: React.FC = () => {
   const [currentRating, setCurrentRating] = useState<number>(0);
 
   // FETCH 学院信息
-  const {loading, data: faculties} = useRequest(getFacultyList, {
+  const {loading: loading1, data: faculties} = useRequest(getFacultyList, {
     formatResult: res => res?.data
   })
+  // FETCH 活动列表
+  // eslint-disable-next-line prefer-const
+  let {loading: loading2, data: activityList} = useRequest(getActivityList, {
+    formatResult: res => res?.data.activityList
+  })
 
-  if (loading) {
+  if (loading1 || loading2) {
     return <PageLoading/>
   }
+
+  // 对活动顺序排序
+  if (activityList && activityList.length) {
+    activityList = sortActivityList(activityList)
+  }
+  // 渲染活动菜单
+  const activityMenu = activityList ? activityList.map((item) => ({label: item.name, key: item.id})) : []
+  // 获取当前活动期数
+  const currentReqActivity = reqActivity ?? activityList?.at(0)
 
   const handleConfirmRating = async (notCorrect?: boolean) => {
     setRatingDrawerVisible(false)
@@ -137,7 +158,33 @@ const PersonAdmin: React.FC = () => {
         },
       },
       fixed: 'left',
-      width: 150
+      width: 100
+    },
+    {
+      title: '打分状态',
+      dataIndex: 'rate',
+      valueEnum: {
+        '0': {
+          text: '需要打分',
+          status: 'Warning'
+        },
+        '1': {
+          text: '已打分',
+          status: 'Success'
+        },
+        '2': {
+          text: '暂无照片',
+        },
+      },
+      sorter: (o1, o2) => {
+        return numberSorter(o1.rate, o2.rate)
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.rate, value as string)
+      },
+      fixed: 'left',
+      width: 120
     },
     {
       title: '颜值',
@@ -175,7 +222,7 @@ const PersonAdmin: React.FC = () => {
         return numberFilter(record.appearance, value as string)
       },
       fixed: 'left',
-      width: 150
+      width: 100
     },
     {
       title: '性别',
@@ -258,27 +305,40 @@ const PersonAdmin: React.FC = () => {
         search={{
           labelWidth: "auto",
         }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            disabled
-          >
-            <EditOutlined/> 修改
-          </Button>,
-          <Button
-            type="primary"
-            key="primary"
-            disabled
-          >
-            <ExportOutlined/> 导出
-          </Button>,
-        ]}
+        toolbar={{
+          actions: [
+            <Dropdown
+              key="overlay"
+              overlay={
+                <Menu
+                  onClick={(e) => {
+                    const selectedActivity = activityList?.find((item) => item.id === parseInt(e.key))
+                    if (selectedActivity?.id !== currentReqActivity?.id) {
+                      setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)))
+                      actionRef?.current?.reloadAndRest?.()
+                    }
+                  }}
+                  items={activityMenu}
+                />
+              }
+            >
+              <Button>
+                {currentReqActivity ? currentReqActivity.name : '选择活动'}
+                <DownOutlined
+                  style={{
+                    marginLeft: 8,
+                  }}
+                />
+              </Button>
+            </Dropdown>,
+          ],
+        }}
         request={async (
           params: any & API.PageParams
         ) => {
           const res = await getPersonalInfo({
             ...params,
+            activityId: currentReqActivity?.id,
             pageIndex: params.current,
             pageSize: params.pageSize,
           });
@@ -300,7 +360,8 @@ const PersonAdmin: React.FC = () => {
           return data.map((record) => {
             return {
               ...record,
-              appearance: record.appearance.toString()
+              rate: record.rate?.toString(),
+              appearance: record.appearance?.toString()
             }
           })
         })}

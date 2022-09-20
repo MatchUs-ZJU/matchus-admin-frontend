@@ -35,6 +35,7 @@ const ActivityAdmin: React.FC = () => {
   const [sortedInfo, setSortedInfo] = useState<SorterResult<any>>({});
 
   // 加载活动列表
+  // eslint-disable-next-line prefer-const
   let {loading, data: activityList} = useRequest(getActivityList, {
     formatResult: res => res?.data.activityList
   })
