@@ -496,10 +496,6 @@ const ActivityAdmin: React.FC = () => {
           status: 'Error'
         },
         1: {
-          text: '填写中',
-          status: 'Warning'
-        },
-        2: {
           text: '已完成',
           status: 'Success'
         }

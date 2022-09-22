@@ -91,7 +91,7 @@ export async function getUserRegisterInfo(
   });
 }
 
-export async function checkRegisterInfo(id: string | number, identified: number, reason?: number, options?: { [key: string]: any }) {
+export async function checkRegisterInfo(id: string | number, identified: number, reason?: string, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/register/check`, {
     method: 'POST',
     data: {id, identified, reason},

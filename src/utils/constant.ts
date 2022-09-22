@@ -14,3 +14,5 @@ export const IDENTIFY_PASS = 1, IDENTIFY_NOT_PASS = 0
 export const loginPath = '/user/login'
 
 export const CHOOSE = 1, NOT_CHOOSE = 2
+
+export const MAX_REASON_LENGTH = 20

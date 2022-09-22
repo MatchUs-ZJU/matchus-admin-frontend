@@ -18,7 +18,10 @@ export type PersonInfoItem = {
   oneYearStatus: string,
   futureBase: string,
   selfFutureBase: string,
-  temperament: string
+  currentSchoolGrade: string,
+  currentSchoolCampus: string,
+  schoolGraduateInSep: string,
+  temperament: string,
   interest: string,
   stayUpFrequency: string,
   exerciseFrequency: string,

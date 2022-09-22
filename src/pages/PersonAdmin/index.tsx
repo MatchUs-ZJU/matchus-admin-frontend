@@ -24,7 +24,10 @@ const columnAttrList = [
   {column: '体型', dataIndex: 'physique'},
   {column: '手机号', dataIndex: 'phoneNumber'},
   {column: '微信号', dataIndex: 'wechatNumber'},
+  {column: '校区', dataIndex: 'currentSchoolCampus'},
+  {column: '年级', dataIndex: 'currentSchoolGrade'},
   {column: '行业', dataIndex: 'industry'},
+  {column: '是否九月毕业', dataIndex: 'schoolGraduateInSep'},
   {column: '在校生：一年内状态', dataIndex: 'oneYearStatus'},
   {column: '在校生：未来发展地', dataIndex: 'futureBase'},
   {column: '在校生：自选未来发展地', dataIndex: 'selfFutureBase'},
@@ -67,6 +70,7 @@ const calcScrollWidth = (columnsState: Record<string, ColumnsState>) => {
 }
 
 const sortActivityList = (activityList: ActivityItem[]) => {
+  // @ts-ignore id cannot be null here
   return activityList.sort((o1, o2) => o2.id - o1.id)
 }
 
@@ -100,8 +104,9 @@ const PersonAdmin: React.FC = () => {
   }
   // 渲染活动菜单
   const activityMenu = activityList ? activityList.map((item) => ({label: item.name, key: item.id})) : []
+  activityMenu.push({label: '所有活动', key: -1})
   // 获取当前活动期数
-  const currentReqActivity = reqActivity ?? activityList?.at(0)
+  const currentReqActivity = reqActivity
 
   const handleConfirmRating = async (notCorrect?: boolean) => {
     setRatingDrawerVisible(false)
@@ -313,6 +318,11 @@ const PersonAdmin: React.FC = () => {
                 <Menu
                   onClick={(e) => {
                     const selectedActivity = activityList?.find((item) => item.id === parseInt(e.key))
+                    if(selectedActivity === undefined && currentReqActivity !== undefined) {
+                      setReqActivity(undefined)
+                      actionRef?.current?.reloadAndRest?.()
+                    }
+
                     if (selectedActivity?.id !== currentReqActivity?.id) {
                       setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)))
                       actionRef?.current?.reloadAndRest?.()
@@ -323,7 +333,7 @@ const PersonAdmin: React.FC = () => {
               }
             >
               <Button>
-                {currentReqActivity ? currentReqActivity.name : '选择活动'}
+                {currentReqActivity ? currentReqActivity.name : '所有活动'}
                 <DownOutlined
                   style={{
                     marginLeft: 8,
@@ -448,7 +458,7 @@ const PersonAdmin: React.FC = () => {
             <DescriptionItem title='用户类型' content={getUserTypeText(currentRow?.userType)}/>
           </Col>
           <Col span={12}>
-            <DescriptionItem title='院系' content={faculties?.[currentRow?.faculty as number]?.name}/>
+            <DescriptionItem title='院系' content={faculties?.[currentRow?.faculty as number - 1]?.name}/>
           </Col>
         </Row>
         {
@@ -458,7 +468,7 @@ const PersonAdmin: React.FC = () => {
                 <Row>
                   <Col span={12}>
                     <DescriptionItem title={columnAttrList[index].column}
-                                     content={currentRow?.[columnAttrList[index].dataIndex]}/>
+                                     content={currentRow?.[columnAttrList[index].dataIndex] ?? '-'}/>
                   </Col>
                   {
                     (index !== (columnAttrList.length - 1)) &&
