@@ -12,7 +12,7 @@ export type FacultyItem = {
 
 export type ActivityItem = {
   id: number,
-  name: string
+  name: string,
 }
 
 export type Field = {

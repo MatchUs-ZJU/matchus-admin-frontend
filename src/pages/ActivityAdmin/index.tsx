@@ -35,6 +35,7 @@ const ActivityAdmin: React.FC = () => {
   const [sortedInfo, setSortedInfo] = useState<SorterResult<any>>({});
 
   // 加载活动列表
+  // eslint-disable-next-line prefer-const
   let {loading, data: activityList} = useRequest(getActivityList, {
     formatResult: res => res?.data.activityList
   })
@@ -326,7 +327,7 @@ const ActivityAdmin: React.FC = () => {
       hideInForm: true,
       hideInSearch: true,
       renderText: (_, item) => {
-        return `${item.proportion ? Math.round(item.proportion) : 'NaN'}%`
+        return `${item.proportion !== undefined ? Math.round(item.proportion) : 'NaN'}%`
       },
       sorter: (o1, o2) => {
         return numberSorter(o1.proportion!, o2.proportion!)
@@ -495,10 +496,6 @@ const ActivityAdmin: React.FC = () => {
           status: 'Error'
         },
         1: {
-          text: '填写中',
-          status: 'Warning'
-        },
-        2: {
           text: '已完成',
           status: 'Success'
         }
@@ -634,24 +631,30 @@ const ActivityAdmin: React.FC = () => {
         request={fetchTableInfo}
         columns={reqType === MatchSuccessType ? successfulColumns : reqType === MatchFailType ? failColumns : reqType === MatchOutType ? outColumns : noResultColumns}
       />
-      <MatchDetail
-        visible={matchDetailDrawerVisible}
-        onClose={() => {
-          setMatchDetailDrawerVisible(false)
-          setCurrentRow(undefined)
-        }}
-        activity={currentReqActivity}
-        values={currentRow}
-      />
-      <DailyQuestions
-        visible={dailyQuestionDrawerVisible}
-        onClose={() => {
-          setDailyQuestionDrawerVisible(false)
-          setCurrentRow(undefined)
-        }}
-        activity={currentReqActivity}
-        values={currentRow}
-      />
+      {
+        matchDetailDrawerVisible &&
+        <MatchDetail
+          visible={matchDetailDrawerVisible}
+          onClose={() => {
+            setMatchDetailDrawerVisible(false)
+            setCurrentRow(undefined)
+          }}
+          activity={currentReqActivity}
+          values={currentRow}
+        />
+      }
+      {
+        dailyQuestionDrawerVisible &&
+        <DailyQuestions
+          visible={dailyQuestionDrawerVisible}
+          onClose={() => {
+            setDailyQuestionDrawerVisible(false)
+            setCurrentRow(undefined)
+          }}
+          activity={currentReqActivity}
+          values={currentRow}
+        />
+      }
       <Drawer
         title='修改失败理由'
         width={400}
@@ -660,7 +663,7 @@ const ActivityAdmin: React.FC = () => {
           setCurrentRow(undefined)
           setFailReason('')
         }}
-        afterVisibleChange={()=>{
+        afterVisibleChange={() => {
           setFailReason('')
         }}
         visible={modifyReasonDrawerVisible}

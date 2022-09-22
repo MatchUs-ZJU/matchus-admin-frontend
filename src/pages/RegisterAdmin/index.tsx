@@ -25,7 +25,7 @@ import {
   FAIL_MESSAGE_DURATION,
   IDENTIFY_NOT_PASS,
   IDENTIFY_PASS,
-  IDENTIFY_STATUS,
+  IDENTIFY_STATUS, MAX_REASON_LENGTH,
   SUCCESS_MESSAGE_DURATION
 } from "@/utils/constant";
 import DescriptionItem from "@/components/DescriptionItem";
@@ -35,6 +35,15 @@ import {getFacultyList} from "@/services/faculty";
 import {PageLoading} from "@ant-design/pro-components";
 import {numberFilter, stringSorter} from "@/utils/utils";
 
+const denyReasonChoices =
+  <>
+    <Select.Option value={'关键信息有遮挡'}>关键信息有遮挡</Select.Option>
+    <Select.Option value={'学号填写错误'}>学号填写错误</Select.Option>
+    <Select.Option value={'姓名不符合要求'}>姓名不符合要求</Select.Option>
+    <Select.Option value={'用户类型不符'}>用户类型不符</Select.Option>
+    <Select.Option value={'学院不符'}>学院不符</Select.Option>
+    <Select.Option value={'其它问题'}>其它问题</Select.Option>
+  </>
 
 const RegisterAdmin: React.FC = () => {
 
@@ -43,7 +52,7 @@ const RegisterAdmin: React.FC = () => {
   const [identifyDrawerVisible, setIdentifyDrawerVisible] = useState<boolean>(false);
   const [identifyDenyReasonModalVisible, setIdentifyDenyReasonModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<UserRegisterInfoItem>();
-  const [denyReason, setDenyReason] = useState<number>(0);
+  const [denyReasons, setDenyReasons] = useState<string[]>([]);
 
   // FETCH 学院信息
   const {loading, data: faculties} = useRequest(getFacultyList, {
@@ -67,9 +76,18 @@ const RegisterAdmin: React.FC = () => {
   }
 
   const handleIdentifyDeny = async () => {
+    if (denyReasons.length === 0) {
+      message.error('请选择审核失败原因', FAIL_MESSAGE_DURATION)
+      return
+    } else if(denyReasons.toString().length > MAX_REASON_LENGTH) {
+      message.error('原因总长度不能超过20个字符', FAIL_MESSAGE_DURATION)
+      return
+    }
+
     setIdentifyDrawerVisible(false)
     setIdentifyDenyReasonModalVisible(false)
-    const res = await checkRegisterInfo(currentRow?.id as string, IDENTIFY_NOT_PASS, denyReason)
+    const res = await checkRegisterInfo(currentRow?.id as string, IDENTIFY_NOT_PASS, denyReasons.toString())
+
     if (!res || !res.success) {
       message.error('审核用户失败', FAIL_MESSAGE_DURATION);
     } else {
@@ -314,7 +332,7 @@ const RegisterAdmin: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title='学院' content={faculties?.[currentRow?.faculty as number]?.name}/>
+            <DescriptionItem title='学院' content={faculties?.[currentRow?.faculty as number - 1]?.name}/>
           </Col>
         </Row>
         <Row>
@@ -332,22 +350,24 @@ const RegisterAdmin: React.FC = () => {
       <Modal title='请选择失败理由'
              visible={identifyDenyReasonModalVisible}
              onCancel={() => {
-               setDenyReason(0)
+               setDenyReasons([])
                setIdentifyDenyReasonModalVisible(false)
              }}
              onOk={handleIdentifyDeny}
              afterClose={() => {
-               setDenyReason(0)
+               setDenyReasons([])
              }}
       >
         {
           identifyDenyReasonModalVisible &&
-          <Select placeholder='请选择失败理由' style={{width: "300px"}} onChange={(v) => setDenyReason(v)}>
-            <Select.Option value={1}>关键信息有遮挡</Select.Option>
-            <Select.Option value={2}>学号填写错误</Select.Option>
-            <Select.Option value={3}>姓名不符合要求</Select.Option>
-            <Select.Option value={4}>用户类型不符</Select.Option>
-            <Select.Option value={5}>学院不符</Select.Option>
+          <Select
+            mode="tags"
+            allowClear
+            style={{width: '300px'}}
+            placeholder="请选择失败理由"
+            onChange={(v) => setDenyReasons(v)}
+          >
+            {denyReasonChoices}
           </Select>
         }
       </Modal>
@@ -369,7 +389,7 @@ const RegisterAdmin: React.FC = () => {
           >
             <Form.Item
               label="姓名"
-              name="realName"
+              name="realname"
               rules={[{required: true, message: '姓名不可为空'}]}
             >
               <Input/>

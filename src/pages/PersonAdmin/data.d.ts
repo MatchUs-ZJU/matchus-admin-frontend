@@ -3,6 +3,7 @@ export type PersonInfoItem = {
   userType: number,
   faculty: number,
   appearance: number,
+  rate: number,
   realname: string,
   studentNumber: string,
   gender: number,
@@ -17,7 +18,10 @@ export type PersonInfoItem = {
   oneYearStatus: string,
   futureBase: string,
   selfFutureBase: string,
-  temperament: string
+  currentSchoolGrade: string,
+  currentSchoolCampus: string,
+  schoolGraduateInSep: string,
+  temperament: string,
   interest: string,
   stayUpFrequency: string,
   exerciseFrequency: string,
@@ -27,7 +31,7 @@ export type PersonInfoItem = {
   willingness: string,
   loveHistory: string,
   consumption: string,
-  consumption_share: string,
+  consumptionShare: string,
   mbti: string
   graduateEducation: string,
   graduateWorkLocation: string,

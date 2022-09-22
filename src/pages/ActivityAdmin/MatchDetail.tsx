@@ -14,7 +14,7 @@ interface MatchDetailProps {
 
 const MatchDetail = (props: MatchDetailProps) => {
 
-  const {visible = false, onClose, values, activity} = props
+  const {visible, onClose, values, activity} = props
 
   // FETCH 用户个人信息
   const {loading, error, data: userInfo} =
@@ -22,7 +22,7 @@ const MatchDetail = (props: MatchDetailProps) => {
         return getUserMatchInfo({activityId: activity?.id as number, studentNumber: values?.studentNumber as string})
     }, {
       formatResult: res => res?.data.matchInfo.info,
-      ready: visible
+      ready: visible,
     })
 
   if (error) {
