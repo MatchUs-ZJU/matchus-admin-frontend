@@ -7,7 +7,14 @@ import {Button, Menu, Dropdown, Radio, Tag, Drawer, Select, message, Popconfirm}
 import {DownOutlined} from "@ant-design/icons";
 import type {MatchResultItem} from "@/pages/ActivityAdmin/data";
 import {useRequest} from "@@/plugin-request/request";
-import {editTwc, getActivityList, getActivityMatchInfo, modifyFailReason, outPool} from "@/services/activity";
+import {
+  editTwc,
+  getActivityList,
+  getActivityMatchInfo,
+  modifyFailReason,
+  modifySurveyState,
+  outPool
+} from "@/services/activity";
 import {PageLoading} from "@ant-design/pro-components";
 import {CHOOSE, FAIL_MESSAGE_DURATION, NOT_CHOOSE, SUCCESS_MESSAGE_DURATION} from "@/utils/constant";
 import type {FilterValue, SorterResult} from "antd/es/table/interface";
@@ -17,6 +24,7 @@ import {numberFilter, numberSorter, stringSorter} from "@/utils/utils";
 
 const MatchSuccessType = 0, MatchFailType = 1, MatchOutType = 2, MatchNoResultType = 3
 const IN_POOL = 0, OUT_POOL = 1
+const FILLED = 1, NOT_FILLED = 0
 
 const sortActivityList = (activityList: ActivityItem[]) => {
   return activityList.sort((o1, o2) => o2.id - o1.id)
@@ -60,6 +68,17 @@ const ActivityAdmin: React.FC = () => {
       message.error('编辑匹配失败原因失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('编辑匹配失败原因成功', SUCCESS_MESSAGE_DURATION);
+    }
+
+    actionRef?.current?.reloadAndRest?.()
+  }
+
+  const handleModifySurveyState = async (filled: number, record: MatchResultItem) => {
+    const res = await modifySurveyState(currentReqActivity?.id as number, record.id as string, filled)
+    if (!res || !res.success) {
+      message.error('修改问卷状态失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('修改问卷状态成功', SUCCESS_MESSAGE_DURATION);
     }
 
     actionRef?.current?.reloadAndRest?.()
@@ -453,6 +472,7 @@ const ActivityAdmin: React.FC = () => {
       ]
     },
   ]
+
   // 匹配结果未出表格信息
   const noResultColumns: ProColumns<MatchResultItem> [] = [
     {
@@ -559,6 +579,15 @@ const ActivityAdmin: React.FC = () => {
           {`${record.out === IN_POOL ? '出' : '入'}库`}
         </a>,
         <a
+          key="survey"
+          onClick={async () => {
+            setCurrentRow(record)
+            await handleModifySurveyState(record.surveyComplete === NOT_FILLED ? FILLED : NOT_FILLED, record)
+          }}
+        >
+          修改问卷状态
+        </a>,
+        <a
           key="refund"
           onClick={() => {
             console.log('refund')
@@ -594,7 +623,7 @@ const ActivityAdmin: React.FC = () => {
               <Radio.Button value={MatchSuccessType}>匹配成功</Radio.Button>
               <Radio.Button value={MatchFailType}>匹配失败</Radio.Button>
               <Radio.Button value={MatchOutType}>出库用户</Radio.Button>
-              <Radio.Button value={MatchNoResultType}>匹配结果未出</Radio.Button>
+              <Radio.Button value={MatchNoResultType}>参与活动用户</Radio.Button>
             </Radio.Group>
           ),
           actions: [

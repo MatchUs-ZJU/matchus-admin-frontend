@@ -51,6 +51,18 @@ export async function modifyFailReason(activityId: string | number, studentNumbe
   });
 }
 
+export async function modifySurveyState(activityId: string | number, userId: string, isFill: number, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/activity/modFillSurvey`, {
+    method: 'POST',
+    data: {
+      activityId,
+      userId,
+      isFill
+    },
+    ...(options || {}),
+  });
+}
+
 export async function outPool(activityId: string | number, studentNumber: string, out: number, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/activity/outPool`, {
     method: 'POST',
