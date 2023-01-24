@@ -27,28 +27,51 @@ export default [
       {
         name: '用户管理',
         icon: 'user',
+        path: 'user',
         routes: [
           {
-            path: '/admin/general',
+            path: 'general',
             name: '用户概览',
             component: './UserGeneral',
           },
           {
-            path: '/admin/register',
+            path: 'register',
             name: '注册信息',
             component: './RegisterAdmin',
           },
           {
-            path: '/admin/person',
+            path: 'person',
             name: '个人信息',
             component: './PersonAdmin',
           },
           {
-            path: '/admin/activity',
+            path: 'activity',
             name: '活动信息',
             component: './ActivityAdmin',
           },
-        ]
+        ],
+      },
+      {
+        path: 'activity',
+        name: '活动管理',
+        icon: 'ControlOutlined',
+        routes: [
+          {
+            path: 'homeoperation',
+            name: '首页运营',
+            component: './HomeOperation',
+          },
+          {
+            path: 'activitycreation',
+            name: '活动创建',
+            component: './ActivityCreation',
+          },
+          {
+            path: 'help',
+            name: '帮助页',
+            component: './Help',
+          },
+        ],
       },
       {
         component: './404',
