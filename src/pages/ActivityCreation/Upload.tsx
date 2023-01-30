@@ -4,18 +4,16 @@ import React from 'react';
 const Upload = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <ProForm>
-        <ProFormUploadButton
-          name="Upload"
-          label="上传头图"
-          max={1}
-          fieldProps={{
-            name: 'file',
-            listType: 'picture-card',
-          }}
-          action="/upload.do"
-        />
-      </ProForm>
+      <ProFormUploadButton
+        name="Upload"
+        label="上传头图"
+        max={1}
+        fieldProps={{
+          name: 'file',
+          listType: 'picture-card',
+        }}
+        action="/upload.do"
+      />
     </div>
   );
 };

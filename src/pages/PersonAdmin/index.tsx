@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ActionType, ColumnsState, ProTable } from '@ant-design/pro-table';
+import { ProForm, ProFormText } from '@ant-design/pro-form';
 import type { ProColumns } from '@ant-design/pro-table';
 import {
   Radio,
@@ -17,7 +18,13 @@ import {
   Dropdown,
   Menu,
 } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+  MinusCircleOutlined,
+  DownCircleOutlined,
+} from '@ant-design/icons';
 import { PersonInfoItem } from '@/pages/PersonAdmin/data';
 import { getPersonalInfo, rateAppearance } from '@/services/users';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
@@ -29,6 +36,9 @@ import { PageLoading } from '@ant-design/pro-components';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import { getActivityList } from '@/services/activity';
 import { ActivityItem } from '@/pages/data';
+import styles from './index.less';
+import Record from './Record';
+import { getUserLuckRecord } from '@/services/users';
 
 const columnAttrList = [
   { column: '生日', dataIndex: 'birth' },
@@ -88,6 +98,23 @@ const sortActivityList = (activityList: ActivityItem[]) => {
   return activityList.sort((o1, o2) => o2.id - o1.id);
 };
 
+export type luckyRecord = {
+  id?: number;
+  activity?: number;
+  userId?: number;
+  subTotal?: number;
+  sum?: string;
+  isManual?: boolean;
+  updateTime?: string;
+};
+export type luckyInfoOfUser = {
+  total?: number;
+  allUserAverage?: number;
+  allUserMiddle?: number;
+  thisUserSum?: number;
+  records?: luckyRecord[];
+};
+
 const PersonAdmin: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [reqActivity, setReqActivity] = useState<ActivityItem | undefined>(undefined);
@@ -98,6 +125,8 @@ const PersonAdmin: React.FC = () => {
   const [confirmRatingModalVisible, setConfirmRatingModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<PersonInfoItem>();
   const [currentRating, setCurrentRating] = useState<number>(0);
+  const [luckyNumberEditVisible, setluckyNumberEditVisible] = useState<boolean>(false);
+  const [luckyInfo, setLuckyInfo] = useState<luckyInfoOfUser>({});
 
   // FETCH 学院信息
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
@@ -286,11 +315,33 @@ const PersonAdmin: React.FC = () => {
       ],
     },
     {
-      title: '学号',
-      dataIndex: 'studentNumber',
-      sorter: (o1, o2) => {
-        return stringSorter(o1.studentNumber, o2.studentNumber);
-      },
+      title: '幸运值',
+      dataIndex: 'luckyNumber',
+      render: (_, record) => (
+        <div className={styles.container}>
+          <span key="rate">{record.luckyNumber}</span>
+          {'  '}
+
+          <a
+            key="more"
+            className={styles.edit}
+            onClick={async () => {
+              const res = await getUserLuckRecord(Number(record.id));
+              if (!res || !res.success) {
+                message.error('获取该用户幸运值记录失败', FAIL_MESSAGE_DURATION);
+              } else {
+                message.success('获取该用户幸运值记录成功', SUCCESS_MESSAGE_DURATION);
+              }
+              console.log(res.data);
+              setLuckyInfo(res.data);
+              setluckyNumberEditVisible(true);
+              setCurrentRow(record);
+            }}
+          >
+            <EditOutlined />
+          </a>
+        </div>
+      ),
     },
     {
       title: '学院',
@@ -528,6 +579,36 @@ const PersonAdmin: React.FC = () => {
       >
         确认该用户照片不符合要求？
       </Modal>
+      {luckyNumberEditVisible && (
+        <Drawer
+          title="幸运值编辑"
+          width={400}
+          onClose={() => {
+            setluckyNumberEditVisible(false);
+            setCurrentRow(undefined);
+          }}
+          visible={luckyNumberEditVisible}
+          bodyStyle={{ paddingBottom: 80 }}
+        >
+          <div className={styles.formcontainer}>
+            <div className={styles.avg}>
+              *当前所有用户幸运值的平均分{luckyInfo.allUserAverage} 中位数{luckyInfo.allUserMiddle}
+            </div>
+            <ProForm>
+              <ProFormText
+                width="md"
+                name="change"
+                label="改动分值"
+                placeholder="例如'+1'或'-3',不含引号"
+              />
+              <ProFormText width="md" name="reason" label="改动原因" placeholder="" />
+            </ProForm>
+          </div>
+          {luckyInfo.records?.map((luckyrecord) => (
+            <Record {...luckyrecord} />
+          ))}
+        </Drawer>
+      )}
     </PageContainer>
   );
 };

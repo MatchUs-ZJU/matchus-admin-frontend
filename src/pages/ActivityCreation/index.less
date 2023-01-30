@@ -8,6 +8,12 @@
   margin-right: 13px;
   background-color: white;
   border-radius: 10px;
+  transition: all;
+  transition-duration: 0.5s;
+  &:hover {
+    cursor: pointer;
+    opacity: 30%;
+  }
 }
 .card {
   display: flex;
@@ -24,7 +30,7 @@
     font-size: 13px;
     .date {
       color: black;
-      font-size: 25px;
+      font-size: 15px;
     }
   }
 
@@ -49,8 +55,17 @@
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 12px;
-    color: gray;
     font-size: large;
+    .icon {
+      color: gray;
+      &:hover {
+        cursor: pointer;
+        opacity: 50%;
+        transition: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 0.5s;
+      }
+    }
   }
 }
 .steps {
@@ -66,4 +81,18 @@
     margin-left: auto;
     border-radius: 10px;
   }
+}
+
+.tips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 600px;
+  margin-top: 20px;
+  color: #cfcfc4;
+  font-weight: bold;
+  font-size: 30px;
+  background-color: white;
+  border-radius: 10px;
 }

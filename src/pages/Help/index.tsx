@@ -9,7 +9,7 @@ import styles from './index.less';
 const Help: React.FC = () => {
   const columnsArticle: ColumnsType = [
     {
-      title: '顺序',
+      title: '序号',
       dataIndex: 'order',
       key: 'order',
     },

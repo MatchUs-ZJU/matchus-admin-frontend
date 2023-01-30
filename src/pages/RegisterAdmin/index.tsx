@@ -259,7 +259,6 @@ const RegisterAdmin: React.FC = () => {
             pageIndex: params.current,
             pageSize: params.pageSize,
           });
-
           if (res.success) {
             return {
               data: res.data.records,

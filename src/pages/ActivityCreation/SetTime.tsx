@@ -9,35 +9,35 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 
-const SetTime = () => {
+const SetTime = ({ add }) => {
   return (
     <div>
-      <ProForm layout="horizontal">
+      <ProForm layout="horizontal" onFinish={(values) => add(values)}>
         <ProForm.Group>
-          <ProFormText width="xs" name="name" label="期数" />
+          <ProFormText width="xs" name="term" label="期数" />
         </ProForm.Group>
         <ProForm.Group>
           <ProFormDateRangePicker name="dateRange" label="活动时间" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="startDate" label="报名开始时间" />
-          <ProFormTimePicker name="startTime" label="" />
+          <ProFormDatePicker name="signUpStartDate" label="报名开始时间" />
+          <ProFormTimePicker name="signUpStartTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="endDate" label="报名结束时间" />
-          <ProFormTimePicker name="endTime" label="" />
+          <ProFormDatePicker name="signUpEndTime" label="报名结束时间" />
+          <ProFormTimePicker name="signUpEndTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="releaseTime" label="匹配结果公布时间" />
-          <ProFormTimePicker name="releaseDate" label="" />
+          <ProFormDatePicker name="matchResultShowDate" label="匹配结果公布时间" />
+          <ProFormTimePicker name="matchResultShowTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="matchDate" label="双选开始时间" />
-          <ProFormTimePicker name="matchTime" label="" />
+          <ProFormDatePicker name="twoWayChooseStartDate" label="双选开始时间" />
+          <ProFormTimePicker name="twoWayChooseStartTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="matchEndDate" label="双选结束时间" />
-          <ProFormTimePicker name="matchEndTime" label="" />
+          <ProFormDatePicker name="twoWayChooseEndDate" label="双选结束时间" />
+          <ProFormTimePicker name="twoWayChooseEndTime" label="" />
         </ProForm.Group>
       </ProForm>
     </div>
