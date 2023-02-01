@@ -38,7 +38,8 @@ import { getActivityList } from '@/services/activity';
 import { ActivityItem } from '@/pages/data';
 import styles from './index.less';
 import Record from './Record';
-import { getUserLuckRecord } from '@/services/users';
+import { getUserLuckRecord, editUserLuck } from '@/services/users';
+import { ProFormSelect } from '@ant-design/pro-components';
 
 const columnAttrList = [
   { column: '生日', dataIndex: 'birth' },
@@ -113,6 +114,13 @@ export type luckyInfoOfUser = {
   allUserMiddle?: number;
   thisUserSum?: number;
   records?: luckyRecord[];
+  subTotal?: number;
+  reason?: string;
+};
+export type luckyEditInfo = {
+  activityId?: number;
+  reason?: string;
+  subTotal?: number;
 };
 
 const PersonAdmin: React.FC = () => {
@@ -150,6 +158,9 @@ const PersonAdmin: React.FC = () => {
   const activityMenu = activityList
     ? activityList.map((item) => ({ label: item.name, key: item.id }))
     : [];
+  const activityMenuForLuck = activityList
+    ? activityList.map((item) => ({ label: item.name, value: item.id }))
+    : [];
   activityMenu.push({ label: '所有活动', key: -1 });
   // 获取当前活动期数
   const currentReqActivity = reqActivity;
@@ -178,6 +189,24 @@ const PersonAdmin: React.FC = () => {
     }
 
     actionRef?.current?.reloadAndRest?.();
+  };
+
+  const handleLuckChange = async (values: luckyEditInfo) => {
+    values.subTotal = Number(values.subTotal);
+    console.log(values);
+    const res = await editUserLuck(values);
+    if (!res || !res.success) {
+      message.error('幸运值编辑失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('幸运值编辑成功', SUCCESS_MESSAGE_DURATION);
+    }
+    const freshRes = await getUserLuckRecord(Number(currentRow.id));
+    if (!freshRes || !freshRes.success) {
+      message.error('更新幸运值记录失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('更新幸运值记录成功', SUCCESS_MESSAGE_DURATION);
+    }
+    setLuckyInfo(freshRes.data);
   };
 
   const columns: ProColumns<PersonInfoItem>[] = [
@@ -594,14 +623,28 @@ const PersonAdmin: React.FC = () => {
             <div className={styles.avg}>
               *当前所有用户幸运值的平均分{luckyInfo.allUserAverage} 中位数{luckyInfo.allUserMiddle}
             </div>
-            <ProForm>
+            <ProForm onFinish={handleLuckChange}>
+              <ProFormSelect
+                name="activityId"
+                label="活动期数"
+                request={async () => activityMenuForLuck}
+                placeholder="请选择活动期数"
+                rules={[{ required: true, message: '请选择活动期数' }]}
+              />
               <ProFormText
                 width="md"
-                name="change"
+                name="subTotal"
                 label="改动分值"
                 placeholder="例如'+1'或'-3',不含引号"
+                rules={[{ required: true, message: '请填写改动分值' }]}
               />
-              <ProFormText width="md" name="reason" label="改动原因" placeholder="" />
+              <ProFormText
+                rules={[{ required: true, message: '请说明改动原因' }]}
+                width="md"
+                name="reason"
+                label="改动原因"
+                placeholder=""
+              />
             </ProForm>
           </div>
           {luckyInfo.records?.map((luckyrecord) => (

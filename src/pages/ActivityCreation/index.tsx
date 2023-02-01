@@ -40,6 +40,7 @@ const ActivityCreation: React.FC = () => {
   }, []);
 
   const handleFinishPublish = async () => {
+    console.log(activityContent);
     const res = await publishActivity(activityContent);
     if (!res || !res.success) {
       message.error('创建活动失败', FAIL_MESSAGE_DURATION);
@@ -66,6 +67,9 @@ const ActivityCreation: React.FC = () => {
 
   const addContentToActivity = (values: activity) => {
     setActivityContent((preContent) => {
+      if (values.term) {
+        values.term = Number(values.term);
+      }
       const newContent = {
         ...values,
         ...preContent,
@@ -97,7 +101,7 @@ const ActivityCreation: React.FC = () => {
     },
     {
       title: '上传头像',
-      content: <Upload />,
+      content: <Upload add={addContentToActivity} />,
     },
   ];
   const [current, setCurrent] = useState(0);

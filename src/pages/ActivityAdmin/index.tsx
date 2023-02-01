@@ -5,10 +5,10 @@ import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import { ProTable } from '@ant-design/pro-table';
 import type { ActivityItem } from '@/pages/data';
 import { Button, Menu, Dropdown, Radio, Tag, Drawer, Select, message, Popconfirm } from 'antd';
-import { DownOutlined, DownloadOutlined } from '@ant-design/icons';
+import { DownOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 import type { MatchResultItem } from '@/pages/ActivityAdmin/data';
 import { useRequest } from '@@/plugin-request/request';
-import { Modal } from 'antd';
+import { Modal, Upload } from 'antd';
 import {
   editTwc,
   getActivityList,
@@ -30,6 +30,8 @@ import DailyQuestions from '@/pages/ActivityAdmin/DailyQuestions';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import styles from './index.less';
 import { getExportedExample, getExportedTable } from '@/services/activity';
+import { BASE_URL } from '@/services/utils';
+import { uploadFile } from '@/services/activity';
 
 const MatchSuccessType = 0,
   MatchFailType = 1,
@@ -94,16 +96,26 @@ const ActivityAdmin: React.FC = () => {
     const blob = new Blob([res], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
-    link.download = '示例表格.xlsx';
+    link.download = '示例表格.xls';
     link.click();
   };
 
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    let file = e.target.files[0];
+    const res = await uploadFile(currentReqActivity?.id, file);
+    console.log(res);
+    if (!res || !res.success) {
+      message.error('上传文件失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('上传文件成功', SUCCESS_MESSAGE_DURATION);
+    }
+  };
   const handleExportData = async () => {
     const res = await getExportedTable(currentReqActivity?.id);
     const blob = new Blob([res], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
-    link.download = '匹配信息.xlsx';
+    link.download = `${currentReqActivity?.name}匹配信息.xls`;
     link.click();
   };
 
@@ -696,6 +708,7 @@ const ActivityAdmin: React.FC = () => {
                     const selectedActivity = activityList?.find(
                       (item) => item.id === parseInt(e.key),
                     );
+                    console.log(selectedActivity);
                     if (selectedActivity?.id !== currentReqActivity?.id) {
                       setReqActivity(activityList?.find((item) => item.id === parseInt(e.key)));
                       actionRef?.current?.reloadAndRest?.();
@@ -798,25 +811,10 @@ const ActivityAdmin: React.FC = () => {
       </Drawer>
       <Modal title="上传数据" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <div className={styles.buttons}>
+          <input onChange={(e) => handleUpload(e)} className={styles.upload} type="file" />
           <Button icon={<DownloadOutlined />} onClick={handleDowndloadExample}>
             下载示例文件
           </Button>
-          <ProFormUploadButton
-            onChange={(info) => {
-              if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-              }
-              if (info.file.status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully`);
-              } else if (info.file.status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-              }
-            }}
-            label=""
-            name="upload"
-            title="上传匹配数据"
-            action="upload.do"
-          />
         </div>
       </Modal>
     </PageContainer>

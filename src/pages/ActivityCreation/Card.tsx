@@ -7,7 +7,7 @@ const Card = ({ term, dateRange, handleDeleteActivity }) => {
     <div>
       <div className={styles.card}>
         <div className={styles.top}>
-          <div className={styles.alert}>已完成</div>
+          {/* <div className={styles.alert}>已完成</div> */}
           <div>
             第 <b>{term}</b> 期
           </div>
@@ -19,10 +19,10 @@ const Card = ({ term, dateRange, handleDeleteActivity }) => {
             {dateRange[1]}
           </div>
         </div>
-        <div className={styles.iconcontainer}>
+        {/* <div className={styles.iconcontainer}>
           <DeleteOutlined className={styles.icon} onClick={() => handleDeleteActivity(term)} />
           <EditOutlined className={styles.icon} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

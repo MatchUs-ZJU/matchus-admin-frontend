@@ -7,7 +7,6 @@ import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constan
 import { getCarouselData } from '@/services/carousel';
 import ProTable from '@ant-design/pro-table';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import { ProFormUploadDragger } from '@ant-design/pro-form';
 import { ProForm, ProFormText } from '@ant-design/pro-form';
 import { editCarouselInfo, DeleteCarousel } from '@/services/carousel';
 import { getTweetsData } from '@/services/tweet';
@@ -32,26 +31,21 @@ type TweetsItem = {
 const HomeOperation: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const tweetRef = useRef<ActionType>();
-  const getHistory = async () => {
-    const res = await getHistoryData();
-    if (res.success) {
-      return res.data;
-    } else {
-      console.log('error');
-      return undefined;
-    }
-  };
 
   const [initialHistory, setInitialHistory] = useState<API.HistoryData | undefined>({});
   const [carouselEditVisible, setCarouselEditVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<CarouselItem>({});
   const [tweetEditVisible, setTweetEditVisible] = useState<boolean>(false);
-
-  useEffect(() => {
-    getHistory().then((formvalue) => {
-      setInitialHistory(formvalue);
-    });
-  }, []);
+  const getHistory = async () => {
+    const res = await getHistoryData();
+    if (res.success) {
+      console.log(res.data);
+      return res.data;
+    } else {
+      console.log('error');
+      return null;
+    }
+  };
 
   const handleEditCarouselForm = async (values: any) => {
     setCarouselEditVisible(false);
@@ -108,7 +102,7 @@ const HomeOperation: React.FC = () => {
 
   const columnsCarousel: ProColumns<API.CarouselData>[] = [
     {
-      title: '顺序',
+      title: '序号',
       dataIndex: 'id',
       key: 'id',
     },
@@ -216,31 +210,28 @@ const HomeOperation: React.FC = () => {
         >
           {carouselEditVisible && (
             <ProForm initialValues={currentRow} onFinish={handleEditCarouselForm}>
-              <Form.Item
+              <ProFormText
                 label="顺序"
                 name="id"
+                placeholder="请输入该图片的序号"
                 rules={[
                   {
                     required: true,
                     message: '请输入序号',
                   },
                 ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
+              />
+              <ProFormText
                 label="轮播图"
                 name="image"
+                placeholder="请填入轮播图的链接"
                 rules={[
                   {
                     required: true,
-                    message: '请上传轮播图',
+                    message: '请填入轮播图的链接',
                   },
                 ]}
-              >
-                <ProFormUploadDragger label="" name="dragger" action="upload.do" />
-              </Form.Item>
+              />
             </ProForm>
           )}
         </Drawer>
@@ -266,9 +257,7 @@ const HomeOperation: React.FC = () => {
                     message: '请输入题目',
                   },
                 ]}
-              >
-                <Input />
-              </ProFormText>
+              />
               <ProFormText
                 label="链接"
                 name="url"
@@ -278,9 +267,7 @@ const HomeOperation: React.FC = () => {
                     message: '请输入链接',
                   },
                 ]}
-              >
-                <Input />
-              </ProFormText>
+              />
               <ProFormText
                 label="标签#"
                 name="tag"
@@ -290,34 +277,41 @@ const HomeOperation: React.FC = () => {
                     message: '请输入标签',
                   },
                 ]}
-              >
-                <Input />
-              </ProFormText>
+              />
               <ProFormText
-                label="日期"
-                name="date"
+                label="图片"
+                name="image"
+                rules={[
+                  {
+                    required: true,
+                    message: '请填入图片链接',
+                  },
+                ]}
+              />
+              <ProFormDatePicker
                 rules={[
                   {
                     required: true,
                     message: '请输入报名开始时间',
                   },
                 ]}
-              >
-                <ProFormDatePicker name="startDate" label="报名开始时间" />
-              </ProFormText>
+                name="date"
+                label="报名开始时间"
+              />
             </ProForm>
           )}
         </Drawer>
-        <Form
-          initialValues={initialHistory}
+        <ProForm
           title="历史数据"
           name="历史数据"
           size="middle"
-          layout="inline"
-          wrapperCol={{ offset: 1, span: 16 }}
+          style={{ maxWidth: 300 }}
+          wrapperCol={{ span: 32 }}
+          layout="vertical"
           onFinish={handleEditHistoryData}
+          request={() => getHistory()}
         >
-          <Form.Item
+          <ProFormText
             label="已举办期数"
             name="totalTerm"
             rules={[
@@ -326,10 +320,9 @@ const HomeOperation: React.FC = () => {
                 message: 'Please input your username!',
               },
             ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
+          />
+
+          <ProFormText
             label="配对成功人数"
             name="matchs"
             rules={[
@@ -338,10 +331,9 @@ const HomeOperation: React.FC = () => {
                 message: 'Please input your username!',
               },
             ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
+          />
+
+          <ProFormText
             label="成功脱单人数"
             name="unavailable"
             rules={[
@@ -350,10 +342,9 @@ const HomeOperation: React.FC = () => {
                 message: 'Please input your username!',
               },
             ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
+          />
+
+          <ProFormText
             label="活动参与人数"
             name="participants"
             rules={[
@@ -362,15 +353,8 @@ const HomeOperation: React.FC = () => {
                 message: 'Please input your username!',
               },
             ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item style={{ marginTop: '30px' }}>
-            <Button type="primary" htmlType="submit" shape="round">
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+          />
+        </ProForm>
       </div>
       <div className={styles.container}>
         <div className={styles.title}>

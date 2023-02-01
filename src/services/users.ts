@@ -3,7 +3,7 @@ import { BASE_URL } from '@/services/utils';
 import { UserGeneralInfoItem } from '@/pages/UserGeneral/data';
 import { UserRegisterInfoItem } from '@/pages/RegisterAdmin/data';
 import { PersonInfoItem } from '@/pages/PersonAdmin/data';
-import { luckyInfoOfUser } from '@/pages/PersonAdmin';
+import { luckyInfoOfUser, luckyEditInfo } from '@/pages/PersonAdmin';
 
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.LoginResult>>(`${BASE_URL}/login`, {
@@ -183,6 +183,18 @@ export function getUserLuckRecord(userId?: number, options?: { [key: string]: an
     method: 'GET',
     params: {
       userId,
+    },
+    ...(options || {}),
+  });
+}
+
+export async function editUserLuck(values: luckyEditInfo, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/user/appearance`, {
+    method: 'POST',
+    data: {
+      activityId: values.activityId,
+      reason: values.reason,
+      subTotal: values.subTotal,
     },
     ...(options || {}),
   });

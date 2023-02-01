@@ -1,4 +1,5 @@
 import { request } from '@@/plugin-request/request';
+import { extend } from 'umi-request';
 import { ActivityItem } from '@/pages/data';
 import { BASE_URL } from '@/services/utils';
 import { MatchResultItem, UserMatchInfo } from '@/pages/ActivityAdmin/data';
@@ -128,7 +129,7 @@ export async function getUserMatchInfo(
 }
 
 export async function publishActivity(activityContent: activity, options?: { [key: string]: any }) {
-  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/activity/modTwc`, {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/create-activity/put`, {
     method: 'POST',
     data: {
       ...activityContent,
@@ -173,5 +174,18 @@ export async function getExportedExample(options?: { [key: string]: any }) {
     method: 'GET',
     responseType: 'blob',
     ...(options || {}),
+  });
+}
+
+export async function uploadFile(activityId: number, file: File, options?: { [key: string]: any }) {
+  let form = new FormData();
+  form.append('activityId', String(activityId));
+  form.append('file', file);
+
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/activity/importResult`, {
+    method: 'POST',
+    data: form,
+    ...(options || {}),
+    requestType: 'form',
   });
 }

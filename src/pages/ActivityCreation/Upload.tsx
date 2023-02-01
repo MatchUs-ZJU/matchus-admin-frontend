@@ -1,20 +1,11 @@
-import { ProForm, ProFormUploadButton } from '@ant-design/pro-components';
+import { ProForm, ProFormText } from '@ant-design/pro-components';
 import React from 'react';
 
-const Upload = () => {
+const Upload = ({ add }) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <ProFormUploadButton
-        name="Upload"
-        label="上传头图"
-        max={1}
-        fieldProps={{
-          name: 'file',
-          listType: 'picture-card',
-        }}
-        action="/upload.do"
-      />
-    </div>
+    <ProForm layout="horizontal" onFinish={(values) => add(values)}>
+      <ProFormText width="xl" name="imageUrl" label="上传头图的链接" />
+    </ProForm>
   );
 };
 

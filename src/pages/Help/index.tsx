@@ -1,46 +1,182 @@
 import { PageContainer } from '@ant-design/pro-layout';
-import React from 'react';
-import { DndProvider } from 'react-dnd';
-import { Table, Button } from 'antd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { ColumnsType } from 'antd/es/table';
+import React, { useState } from 'react';
+import { Button } from 'antd';
+import ProTable from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import styles from './index.less';
+import { getHelpData } from '@/services/help';
+import { Drawer } from 'antd';
+import ProForm from '@ant-design/pro-form';
+import { ProFormText, ProFormTextArea } from '@ant-design/pro-components';
+import { message } from 'antd';
+import { deleteQuestion } from '@/services/help';
+import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
+import { useRef } from 'react';
+import { editQuestionData } from '@/services/help';
+
+type HelpItem = {
+  id?: number;
+  question?: string;
+  answer?: string;
+  sequence?: number;
+};
 
 const Help: React.FC = () => {
-  const columnsArticle: ColumnsType = [
+  const actionRef = useRef<ActionType>();
+  const [currentRow, setCurrentRow] = useState<HelpItem>({});
+  const [questionEditVisible, setQuestionEditVisible] = useState<boolean>(false);
+
+  const handleEditQuestionForm = async (values: any) => {
+    values.id = currentRow.id;
+    console.log(values);
+    const res = await editQuestionData(values);
+    if (!res || !res.success) {
+      message.error('编辑历史数据失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('编辑历史数据成功', SUCCESS_MESSAGE_DURATION);
+    }
+    actionRef?.current?.reloadAndRest?.();
+  };
+
+  const handleDeleteQuestion = async (id: number) => {
+    console.log(id);
+    const res = await deleteQuestion(id);
+    if (!res || !res.success) {
+      message.error('删除轮播图失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('删除轮播图成功', SUCCESS_MESSAGE_DURATION);
+    }
+    actionRef?.current?.reloadAndRest?.();
+  };
+
+  const columnsArticle: ProColumns<HelpItem>[] = [
     {
       title: '序号',
-      dataIndex: 'order',
-      key: 'order',
+      dataIndex: 'sequence',
+      key: 'sequence',
     },
     {
-      title: '题目',
-      dataIndex: 'title',
-      key: 'title',
+      title: '问题',
+      dataIndex: 'question',
+      key: 'question',
     },
     {
       title: '回答',
-      dataIndex: 'pic',
-      key: 'pic',
+      dataIndex: 'answer',
+      key: 'answer',
     },
     {
       title: '操作',
       dataIndex: 'operation',
       key: 'operation',
+      valueType: 'option',
       width: 200,
-      render: (_, record) => [<a key="upload">编辑</a>, <a key="delete">删除</a>],
+      render: (_, record) => [
+        <a
+          onClick={() => {
+            setCurrentRow(record);
+            setQuestionEditVisible(true);
+          }}
+          key="upload"
+        >
+          编辑
+        </a>,
+        <a
+          key="delete"
+          onClick={() => {
+            handleDeleteQuestion(record.id as number);
+          }}
+        >
+          删除
+        </a>,
+      ],
     },
   ];
+
   return (
     <PageContainer>
+      <Drawer
+        title="常见问题"
+        width={400}
+        onClose={() => {
+          setQuestionEditVisible(false);
+          setCurrentRow({});
+        }}
+        visible={questionEditVisible}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        {questionEditVisible && (
+          <ProForm initialValues={currentRow} onFinish={handleEditQuestionForm}>
+            <ProFormText
+              label="序号"
+              name="sequence"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入序号',
+                },
+              ]}
+            />
+            <ProFormText
+              label="问题"
+              name="question"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入问题',
+                },
+              ]}
+            />
+            <ProFormTextArea
+              label="回答"
+              name="answer"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入回答',
+                },
+              ]}
+            />
+          </ProForm>
+        )}
+      </Drawer>
       <div className={styles.container}>
         <div className={styles.title}>
           <div>常见问题</div>
-          <Button type="primary">新增</Button>
         </div>
-        <DndProvider backend={HTML5Backend}>
-          <Table columns={columnsArticle} />
-        </DndProvider>
+
+        <ProTable<HelpItem>
+          toolBarRender={() => [
+            <Button
+              type="primary"
+              key="primary"
+              onClick={() => {
+                setQuestionEditVisible(true);
+              }}
+            >
+              新建
+            </Button>,
+          ]}
+          columns={columnsArticle}
+          cardBordered
+          actionRef={actionRef}
+          rowKey="key"
+          request={async (params: any & API.PageParams) => {
+            const res = await getHelpData();
+            console.log(res);
+            if (res.success) {
+              return {
+                data: res.data,
+                success: true,
+              };
+            } else {
+              return {
+                data: [],
+                success: false,
+              };
+            }
+          }}
+        />
       </div>
     </PageContainer>
   );
