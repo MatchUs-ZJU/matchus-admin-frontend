@@ -345,10 +345,10 @@ const PersonAdmin: React.FC = () => {
     },
     {
       title: '幸运值',
-      dataIndex: 'luckyNumber',
+      dataIndex: 'luckyValue',
       render: (_, record) => (
         <div className={styles.container}>
-          <span key="rate">{record.luckyNumber}</span>
+          <span key="rate">{record.luckyValue}</span>
           {'  '}
 
           <a
@@ -446,7 +446,7 @@ const PersonAdmin: React.FC = () => {
             pageIndex: params.current,
             pageSize: params.pageSize,
           });
-
+          console.log(res.data.records);
           if (res.success) {
             return {
               data: res.data.records,

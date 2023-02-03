@@ -13,6 +13,7 @@ import { deleteQuestion } from '@/services/help';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
 import { useRef } from 'react';
 import { editQuestionData } from '@/services/help';
+import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 
 type HelpItem = {
   id?: number;
@@ -54,6 +55,9 @@ const Help: React.FC = () => {
       title: '序号',
       dataIndex: 'sequence',
       key: 'sequence',
+      sorter: (o1, o2) => {
+        return numberSorter(o1.sequence, o2.sequence);
+      },
     },
     {
       title: '问题',

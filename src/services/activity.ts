@@ -139,7 +139,7 @@ export async function publishActivity(activityContent: activity, options?: { [ke
 }
 
 export async function getHistoryActivity(options?: { [key: string]: any }) {
-  return request<API.ResponseData<activity[]>>(`${BASE_URL}/create-activity/history`, {
+  return request<API.ResponseData<activity[]>>(`${BASE_URL}/mainpage/create-activity`, {
     method: 'GET',
     ...(options || {}),
   });

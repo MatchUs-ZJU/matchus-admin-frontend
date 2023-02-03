@@ -13,6 +13,7 @@ import { getTweetsData } from '@/services/tweet';
 import { ProFormDatePicker } from '@ant-design/pro-form';
 import { publishTweet } from '@/services/tweet';
 import { DeleteTweet } from '@/services/tweet';
+import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 
 type CarouselItem = {
   id?: number;
@@ -105,6 +106,9 @@ const HomeOperation: React.FC = () => {
       title: '序号',
       dataIndex: 'id',
       key: 'id',
+      sorter: (o1, o2) => {
+        return numberSorter(o1.id, o2.id);
+      },
     },
     {
       title: '图片',
@@ -133,6 +137,9 @@ const HomeOperation: React.FC = () => {
       title: '序号',
       dataIndex: 'id',
       key: 'id',
+      sorter: (o1, o2) => {
+        return numberSorter(o1.id, o2.id);
+      },
     },
     {
       title: '题目',

@@ -5,7 +5,8 @@ export type PersonInfoItem = {
   appearance: number;
   rate: number;
   realname: string;
-  luckyNumber: string;
+  luckyValue: number;
+  luckyPercent: number;
   gender: number;
   birth: string;
   hometown: string;
