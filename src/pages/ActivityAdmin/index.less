@@ -1,0 +1,38 @@
+::file-selector-button {
+  width: 120px;
+  height: 34px;
+  padding: 0 5px 0 5px;
+  color: #918ae3;
+  background-color: white;
+  border: 1px solid #918ae3;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all;
+  transition-duration: 0.5s;
+  &:hover {
+    color: white;
+
+    background-color: #918ae3;
+  }
+}
+[type='file'] {
+  color: #918ae3;
+}
+::-ms-browse {
+  height: 3rem;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  background-color: #2a80eb;
+  border: 1px solid #2a80eb;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .upload {
+    background-color: white;
+  }
+}
