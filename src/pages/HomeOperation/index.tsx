@@ -17,6 +17,7 @@ import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 
 type CarouselItem = {
   id?: number;
+  sequence?: number;
   image?: string;
 };
 type TweetsItem = {
@@ -50,6 +51,8 @@ const HomeOperation: React.FC = () => {
 
   const handleEditCarouselForm = async (values: any) => {
     setCarouselEditVisible(false);
+    if (currentRow.id) values.id = currentRow.id;
+    console.log(values);
     const res = await editCarouselInfo(values);
     if (!res || !res.success) {
       message.error('上传轮播图失败', FAIL_MESSAGE_DURATION);
@@ -60,6 +63,7 @@ const HomeOperation: React.FC = () => {
   };
 
   const handleDeleteCarousel = async (id: number) => {
+    console.log(`我的id是${id}`);
     const res = await DeleteCarousel(id);
     if (!res || !res.success) {
       message.error('删除轮播图失败', FAIL_MESSAGE_DURATION);
@@ -81,6 +85,8 @@ const HomeOperation: React.FC = () => {
 
   const handleEditTweetForm = async (values: any) => {
     setTweetEditVisible(false);
+    if (currentRow.id) values.id = currentRow.id;
+    console.log(values);
     const res = await publishTweet(values);
     if (!res || !res.success) {
       message.error('推文发布失败', FAIL_MESSAGE_DURATION);
@@ -104,10 +110,10 @@ const HomeOperation: React.FC = () => {
   const columnsCarousel: ProColumns<API.CarouselData>[] = [
     {
       title: '序号',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'sequence',
+      key: 'sequence',
       sorter: (o1, o2) => {
-        return numberSorter(o1.id, o2.id);
+        return numberSorter(o1.sequence, o2.sequence);
       },
     },
     {
@@ -123,10 +129,16 @@ const HomeOperation: React.FC = () => {
       key: 'operation',
       valueType: 'option',
       render: (_, record) => [
-        <a onClick={() => setCarouselEditVisible(true)} key="edit">
+        <a
+          onClick={() => {
+            setCurrentRow(record);
+            setCarouselEditVisible(true);
+          }}
+          key="edit"
+        >
           编辑{' '}
         </a>,
-        <a key="delete" onClick={() => handleDeleteCarousel(record.id as number)}>
+        <a key="delete" onClick={() => handleDeleteCarousel(record.id)}>
           删除
         </a>,
       ],
@@ -135,10 +147,10 @@ const HomeOperation: React.FC = () => {
   const columnsArticle: ProColumns<TweetsItem>[] = [
     {
       title: '序号',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'sequence',
+      key: 'sequence',
       sorter: (o1, o2) => {
-        return numberSorter(o1.id, o2.id);
+        return numberSorter(o1.sequence, o2.sequence);
       },
     },
     {
@@ -219,7 +231,7 @@ const HomeOperation: React.FC = () => {
             <ProForm initialValues={currentRow} onFinish={handleEditCarouselForm}>
               <ProFormText
                 label="顺序"
-                name="id"
+                name="sequence"
                 placeholder="请输入该图片的序号"
                 rules={[
                   {
@@ -378,6 +390,7 @@ const HomeOperation: React.FC = () => {
               type="primary"
               key="primary"
               onClick={() => {
+                setCurrentRow({});
                 setCarouselEditVisible(true);
               }}
             >
@@ -418,6 +431,7 @@ const HomeOperation: React.FC = () => {
               type="primary"
               key="primary"
               onClick={() => {
+                setCurrentRow({});
                 setTweetEditVisible(true);
               }}
             >

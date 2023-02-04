@@ -129,7 +129,7 @@ export async function getUserMatchInfo(
 }
 
 export async function publishActivity(activityContent: activity, options?: { [key: string]: any }) {
-  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/create-activity/put`, {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/create-activity`, {
     method: 'POST',
     data: {
       ...activityContent,

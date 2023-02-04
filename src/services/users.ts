@@ -179,7 +179,7 @@ export async function rateAppearance(
 }
 
 export function getUserLuckRecord(userId?: number, options?: { [key: string]: any }) {
-  return request<API.ResponseData<luckyInfoOfUser>>(`${BASE_URL}/user/lucky`, {
+  return request<API.ResponseData<luckyInfoOfUser>>(`${BASE_URL}/user/lucky/get`, {
     method: 'GET',
     params: {
       userId,
@@ -194,7 +194,7 @@ export async function editUserLuck(values: luckyEditInfo, options?: { [key: stri
     data: {
       activityId: values.activityId,
       reason: values.reason,
-      subTotal: values.subTotal,
+      subtotal: values.subtotal,
     },
     ...(options || {}),
   });

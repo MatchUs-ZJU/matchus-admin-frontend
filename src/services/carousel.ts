@@ -12,16 +12,19 @@ export async function editCarouselInfo(formData: any, options?: { [key: string]:
     method: 'POST',
     data: {
       ...formData,
+      mark: 1,
     },
     ...(options || {}),
   });
 }
 
 export async function DeleteCarousel(id: string | number, options?: { [key: string]: any }) {
-  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/tweet`, {
+  console.log('给的id是' + id);
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/pics`, {
     method: 'POST',
     data: {
       id: id,
+      mark: 2,
     },
     ...(options || {}),
   });

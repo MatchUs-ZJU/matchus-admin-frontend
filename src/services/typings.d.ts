@@ -155,5 +155,6 @@ declare namespace API {
   type CarouselData = {
     id?: number;
     image?: string;
+    sequence?: number;
   };
 }
