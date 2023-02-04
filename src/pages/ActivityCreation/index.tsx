@@ -10,9 +10,10 @@ import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constan
 import { publishActivity } from '@/services/activity';
 import { getHistoryActivity } from '@/services/activity';
 import { deleteActivity } from '@/services/activity';
+import { useRequest } from 'umi';
 
 export type activity = {
-  term?: number;
+  term?: string;
   startDate?: string;
   endDate?: string;
   signUpStartTime?: string;
@@ -36,7 +37,7 @@ const ActivityCreation: React.FC = () => {
   useEffect(() => {
     getHistoryActivity()
       .then((res) => res.data)
-      .then((data) => setHistoryActivity(data));
+      .then((data) => setHistoryActivity(data.data));
   }, []);
 
   const handleFinishPublish = async () => {
@@ -68,7 +69,7 @@ const ActivityCreation: React.FC = () => {
   const addContentToActivity = (values: activity) => {
     setActivityContent((preContent) => {
       if (values.term) {
-        values.term = Number(values.term);
+        values.term = values.term;
       }
       const newContent = {
         ...values,

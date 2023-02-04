@@ -103,7 +103,7 @@ export type luckyRecord = {
   id?: number;
   activity?: number;
   userId?: number;
-  subTotal?: number;
+  subtotal?: number;
   sum?: string;
   isManual?: boolean;
   updateTime?: string;
@@ -114,13 +114,13 @@ export type luckyInfoOfUser = {
   allUserMiddle?: number;
   thisUserSum?: number;
   records?: luckyRecord[];
-  subTotal?: number;
+  subtotal?: number;
   reason?: string;
 };
 export type luckyEditInfo = {
   activityId?: number;
   reason?: string;
-  subTotal?: number;
+  subtotal?: number;
 };
 
 const PersonAdmin: React.FC = () => {
@@ -192,7 +192,7 @@ const PersonAdmin: React.FC = () => {
   };
 
   const handleLuckChange = async (values: luckyEditInfo) => {
-    values.subTotal = Number(values.subTotal);
+    values.subtotal = Number(values.subtotal);
     console.log(values);
     const res = await editUserLuck(values);
     if (!res || !res.success) {
@@ -348,7 +348,7 @@ const PersonAdmin: React.FC = () => {
       dataIndex: 'luckyValue',
       render: (_, record) => (
         <div className={styles.container}>
-          <span key="rate">{record.luckyValue}</span>
+          <span key="rate">{`${record.luckyValue} / ${record.luckyPercent}`}</span>
           {'  '}
 
           <a
@@ -633,7 +633,7 @@ const PersonAdmin: React.FC = () => {
               />
               <ProFormText
                 width="md"
-                name="subTotal"
+                name="subtotal"
                 label="改动分值"
                 placeholder="例如'+1'或'-3',不含引号"
                 rules={[{ required: true, message: '请填写改动分值' }]}

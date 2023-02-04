@@ -28,7 +28,7 @@ const Help: React.FC = () => {
   const [questionEditVisible, setQuestionEditVisible] = useState<boolean>(false);
 
   const handleEditQuestionForm = async (values: any) => {
-    values.id = currentRow.id;
+    if (currentRow.id) values.id = currentRow.id;
     console.log(values);
     const res = await editQuestionData(values);
     if (!res || !res.success) {
@@ -40,7 +40,6 @@ const Help: React.FC = () => {
   };
 
   const handleDeleteQuestion = async (id: number) => {
-    console.log(id);
     const res = await deleteQuestion(id);
     if (!res || !res.success) {
       message.error('删除轮播图失败', FAIL_MESSAGE_DURATION);
@@ -155,6 +154,7 @@ const Help: React.FC = () => {
               type="primary"
               key="primary"
               onClick={() => {
+                setCurrentRow({});
                 setQuestionEditVisible(true);
               }}
             >
