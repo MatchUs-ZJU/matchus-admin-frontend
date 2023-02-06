@@ -99,6 +99,14 @@ const UserGeneral: React.FC = () => {
           text: '校友',
           status: 'Error',
         },
+        3: {
+          text: '校友',
+          status: 'Error',
+        },
+        4: {
+          text: '校友',
+          status: 'Error',
+        },
       },
       filters: true,
       onFilter: (value, record) => {

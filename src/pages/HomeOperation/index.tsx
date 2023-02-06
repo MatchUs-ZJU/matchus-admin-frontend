@@ -11,9 +11,10 @@ import { ProForm, ProFormText } from '@ant-design/pro-form';
 import { editCarouselInfo, DeleteCarousel } from '@/services/carousel';
 import { getTweetsData } from '@/services/tweet';
 import { ProFormDatePicker } from '@ant-design/pro-form';
-import { publishTweet } from '@/services/tweet';
+import { publishTweet, createTweet } from '@/services/tweet';
 import { DeleteTweet } from '@/services/tweet';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
+import { createCarouselInfo } from '@/services/carousel';
 
 type CarouselItem = {
   id?: number;
@@ -38,6 +39,9 @@ const HomeOperation: React.FC = () => {
   const [carouselEditVisible, setCarouselEditVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<CarouselItem>({});
   const [tweetEditVisible, setTweetEditVisible] = useState<boolean>(false);
+  const [carouselCreateVisible, setCarouselCreateVisible] = useState<boolean>(false);
+  const [tweetCreateVisible, setTweetCreateVisible] = useState<boolean>(false);
+
   const getHistory = async () => {
     const res = await getHistoryData();
     if (res.success) {
@@ -54,6 +58,18 @@ const HomeOperation: React.FC = () => {
     if (currentRow.id) values.id = currentRow.id;
     console.log(values);
     const res = await editCarouselInfo(values);
+    if (!res || !res.success) {
+      message.error('上传轮播图失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('上传轮播图成功', SUCCESS_MESSAGE_DURATION);
+    }
+    actionRef?.current?.reloadAndRest?.();
+  };
+  const handleCreateCarouselForm = async (values: any) => {
+    setCarouselCreateVisible(false);
+    if (currentRow.id) values.id = currentRow.id;
+    console.log(values);
+    const res = await createCarouselInfo(values);
     if (!res || !res.success) {
       message.error('上传轮播图失败', FAIL_MESSAGE_DURATION);
     } else {
@@ -80,7 +96,7 @@ const HomeOperation: React.FC = () => {
     } else {
       message.success('删除推文成功', SUCCESS_MESSAGE_DURATION);
     }
-    actionRef?.current?.reloadAndRest?.();
+    tweetRef?.current?.reloadAndRest?.();
   };
 
   const handleEditTweetForm = async (values: any) => {
@@ -93,7 +109,20 @@ const HomeOperation: React.FC = () => {
     } else {
       message.success('推文发布成功', SUCCESS_MESSAGE_DURATION);
     }
-    actionRef?.current?.reloadAndRest?.();
+    tweetRef?.current?.reloadAndRest?.();
+  };
+
+  const handleCreateTweetForm = async (values: any) => {
+    setTweetEditVisible(false);
+    if (currentRow.id) values.id = currentRow.id;
+    console.log(values);
+    const res = await createTweet(values);
+    if (!res || !res.success) {
+      message.error('推文发布失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('推文发布成功', SUCCESS_MESSAGE_DURATION);
+    }
+    tweetRef?.current?.reloadAndRest?.();
   };
 
   console.log(initialHistory);
@@ -256,6 +285,33 @@ const HomeOperation: React.FC = () => {
         </Drawer>
 
         <Drawer
+          title="新增轮播图"
+          width={400}
+          onClose={() => {
+            setCarouselCreateVisible(false);
+            setCurrentRow({});
+          }}
+          visible={carouselCreateVisible}
+          bodyStyle={{ paddingBottom: 80 }}
+        >
+          {/* 新建 */}
+          {carouselCreateVisible && (
+            <ProForm initialValues={currentRow} onFinish={handleCreateCarouselForm}>
+              <ProFormText
+                label="轮播图"
+                name="image"
+                placeholder="请填入轮播图的链接"
+                rules={[
+                  {
+                    required: true,
+                    message: '请填入轮播图的链接',
+                  },
+                ]}
+              />
+            </ProForm>
+          )}
+        </Drawer>
+        <Drawer
           title="推文详情"
           width={400}
           onClose={() => {
@@ -267,6 +323,16 @@ const HomeOperation: React.FC = () => {
         >
           {tweetEditVisible && (
             <ProForm initialValues={currentRow} onFinish={handleEditTweetForm}>
+              <ProFormText
+                label="序号"
+                name="sequence"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入序号',
+                  },
+                ]}
+              />
               <ProFormText
                 label="题目"
                 name="title"
@@ -311,11 +377,76 @@ const HomeOperation: React.FC = () => {
                 rules={[
                   {
                     required: true,
-                    message: '请输入报名开始时间',
+                    message: '请输入时间',
                   },
                 ]}
                 name="date"
-                label="报名开始时间"
+                label="时间"
+              />
+            </ProForm>
+          )}
+        </Drawer>
+        <Drawer
+          title="发布推文"
+          width={400}
+          onClose={() => {
+            setTweetCreateVisible(false);
+            setCurrentRow({});
+          }}
+          visible={tweetCreateVisible}
+          bodyStyle={{ paddingBottom: 80 }}
+        >
+          {tweetCreateVisible && (
+            <ProForm initialValues={currentRow} onFinish={handleCreateTweetForm}>
+              <ProFormText
+                label="题目"
+                name="title"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入题目',
+                  },
+                ]}
+              />
+              <ProFormText
+                label="链接"
+                name="url"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入链接',
+                  },
+                ]}
+              />
+              <ProFormText
+                label="标签#"
+                name="tag"
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入标签',
+                  },
+                ]}
+              />
+              <ProFormText
+                label="图片"
+                name="image"
+                rules={[
+                  {
+                    required: true,
+                    message: '请填入图片链接',
+                  },
+                ]}
+              />
+              <ProFormDatePicker
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入时间',
+                  },
+                ]}
+                name="date"
+                label="时间"
               />
             </ProForm>
           )}
@@ -391,7 +522,7 @@ const HomeOperation: React.FC = () => {
               key="primary"
               onClick={() => {
                 setCurrentRow({});
-                setCarouselEditVisible(true);
+                setCarouselCreateVisible(true);
               }}
             >
               新建
@@ -432,7 +563,7 @@ const HomeOperation: React.FC = () => {
               key="primary"
               onClick={() => {
                 setCurrentRow({});
-                setTweetEditVisible(true);
+                setTweetCreateVisible(true);
               }}
             >
               新建

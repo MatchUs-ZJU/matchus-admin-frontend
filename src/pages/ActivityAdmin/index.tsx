@@ -111,6 +111,7 @@ const ActivityAdmin: React.FC = () => {
     }
   };
   const handleExportData = async () => {
+    console.log(currentReqActivity?.id);
     const res = await getExportedTable(currentReqActivity?.id);
     const blob = new Blob([res], { type: 'application/vnd.ms-excel' });
     const link = document.createElement('a');

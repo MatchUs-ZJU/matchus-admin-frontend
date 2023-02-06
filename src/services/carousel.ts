@@ -17,6 +17,16 @@ export async function editCarouselInfo(formData: any, options?: { [key: string]:
     ...(options || {}),
   });
 }
+export async function createCarouselInfo(formData: any, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/pics`, {
+    method: 'POST',
+    data: {
+      ...formData,
+      mark: 0,
+    },
+    ...(options || {}),
+  });
+}
 
 export async function DeleteCarousel(id: string | number, options?: { [key: string]: any }) {
   console.log('给的id是' + id);

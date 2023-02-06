@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './index.less';
 
-const Record = ({ sum, updateTime, subtotal, reason }) => {
+const Record = ({ id, sum, updateTime, subtotal, reason, handleDelete }) => {
   return (
     <div className={styles.record}>
       <div className={styles.recordinfo}>
@@ -17,7 +17,9 @@ const Record = ({ sum, updateTime, subtotal, reason }) => {
           <div className={styles.time}>{updateTime}</div>
         </div>
       </div>
-      <div className={styles.cancel}>撤销</div>
+      <div className={styles.cancel} onClick={() => handleDelete(id)}>
+        撤销
+      </div>
     </div>
   );
 };

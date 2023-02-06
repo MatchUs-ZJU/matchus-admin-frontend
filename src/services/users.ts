@@ -179,7 +179,7 @@ export async function rateAppearance(
 }
 
 export function getUserLuckRecord(userId?: number, options?: { [key: string]: any }) {
-  return request<API.ResponseData<luckyInfoOfUser>>(`${BASE_URL}/user/lucky/get`, {
+  return request<API.ResponseData<luckyInfoOfUser>>(`${BASE_URL}/user/lucky`, {
     method: 'GET',
     params: {
       userId,
@@ -188,13 +188,30 @@ export function getUserLuckRecord(userId?: number, options?: { [key: string]: an
   });
 }
 
-export async function editUserLuck(values: luckyEditInfo, options?: { [key: string]: any }) {
-  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/user/appearance`, {
+export async function editUserLuck(
+  values: luckyEditInfo,
+  userId: number,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/user/lucky`, {
     method: 'POST',
     data: {
       activityId: values.activityId,
       reason: values.reason,
       subtotal: values.subtotal,
+      mark: 0,
+      userId: userId,
+    },
+    ...(options || {}),
+  });
+}
+
+export async function deleteUserLuck(luckyId: number, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/user/lucky`, {
+    method: 'POST',
+    data: {
+      mark: 1,
+      luckyId: luckyId,
     },
     ...(options || {}),
   });

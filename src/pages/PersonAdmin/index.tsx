@@ -40,6 +40,7 @@ import styles from './index.less';
 import Record from './Record';
 import { getUserLuckRecord, editUserLuck } from '@/services/users';
 import { ProFormSelect } from '@ant-design/pro-components';
+import { deleteUserLuck } from '@/services/users';
 
 const columnAttrList = [
   { column: '生日', dataIndex: 'birth' },
@@ -194,11 +195,27 @@ const PersonAdmin: React.FC = () => {
   const handleLuckChange = async (values: luckyEditInfo) => {
     values.subtotal = Number(values.subtotal);
     console.log(values);
-    const res = await editUserLuck(values);
+    const res = await editUserLuck(values, Number(currentRow.id));
     if (!res || !res.success) {
       message.error('幸运值编辑失败', FAIL_MESSAGE_DURATION);
     } else {
       message.success('幸运值编辑成功', SUCCESS_MESSAGE_DURATION);
+    }
+    const freshRes = await getUserLuckRecord(Number(currentRow.id));
+    if (!freshRes || !freshRes.success) {
+      message.error('更新幸运值记录失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('更新幸运值记录成功', SUCCESS_MESSAGE_DURATION);
+    }
+    setLuckyInfo(freshRes.data);
+  };
+  const handleLuckDelete = async (luckyId: number) => {
+    console.log(luckyId);
+    const res = await deleteUserLuck(luckyId);
+    if (!res || !res.success) {
+      message.error('幸运值编辑撤销失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('幸运值编辑撤销成功', SUCCESS_MESSAGE_DURATION);
     }
     const freshRes = await getUserLuckRecord(Number(currentRow.id));
     if (!freshRes || !freshRes.success) {
@@ -225,6 +242,14 @@ const PersonAdmin: React.FC = () => {
           status: 'Success',
         },
         2: {
+          text: '校友',
+          status: 'Error',
+        },
+        3: {
+          text: '校友',
+          status: 'Error',
+        },
+        4: {
           text: '校友',
           status: 'Error',
         },
@@ -348,7 +373,7 @@ const PersonAdmin: React.FC = () => {
       dataIndex: 'luckyValue',
       render: (_, record) => (
         <div className={styles.container}>
-          <span key="rate">{`${record.luckyValue} / ${record.luckyPercent}`}</span>
+          <span key="rate">{`${record.luckyValue} / 前${record.luckyPercent}%`}</span>
           {'  '}
 
           <a
@@ -648,7 +673,7 @@ const PersonAdmin: React.FC = () => {
             </ProForm>
           </div>
           {luckyInfo.records?.map((luckyrecord) => (
-            <Record {...luckyrecord} />
+            <Record {...luckyrecord} handleDelete={handleLuckDelete} />
           ))}
         </Drawer>
       )}

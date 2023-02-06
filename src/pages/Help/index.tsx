@@ -12,7 +12,7 @@ import { message } from 'antd';
 import { deleteQuestion } from '@/services/help';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
 import { useRef } from 'react';
-import { editQuestionData } from '@/services/help';
+import { editQuestionData, createQuestionData } from '@/services/help';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 
 type HelpItem = {
@@ -26,15 +26,28 @@ const Help: React.FC = () => {
   const actionRef = useRef<ActionType>();
   const [currentRow, setCurrentRow] = useState<HelpItem>({});
   const [questionEditVisible, setQuestionEditVisible] = useState<boolean>(false);
+  const [questionCreateVisible, setQuestionCreateVisible] = useState<boolean>(false);
 
   const handleEditQuestionForm = async (values: any) => {
     if (currentRow.id) values.id = currentRow.id;
     console.log(values);
     const res = await editQuestionData(values);
     if (!res || !res.success) {
-      message.error('编辑历史数据失败', FAIL_MESSAGE_DURATION);
+      message.error('编辑常见问题失败', FAIL_MESSAGE_DURATION);
     } else {
-      message.success('编辑历史数据成功', SUCCESS_MESSAGE_DURATION);
+      message.success('编辑常见问题成功', SUCCESS_MESSAGE_DURATION);
+    }
+    actionRef?.current?.reloadAndRest?.();
+  };
+
+  const handleCreateQuestionForm = async (values: any) => {
+    if (currentRow.id) values.id = currentRow.id;
+    console.log(values);
+    const res = await createQuestionData(values);
+    if (!res || !res.success) {
+      message.error('新建常见问题失败', FAIL_MESSAGE_DURATION);
+    } else {
+      message.success('新建常见问题成功', SUCCESS_MESSAGE_DURATION);
     }
     actionRef?.current?.reloadAndRest?.();
   };
@@ -143,6 +156,41 @@ const Help: React.FC = () => {
           </ProForm>
         )}
       </Drawer>
+      <Drawer
+        title="常见问题"
+        width={400}
+        onClose={() => {
+          setQuestionCreateVisible(false);
+          setCurrentRow({});
+        }}
+        visible={questionCreateVisible}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        {questionCreateVisible && (
+          <ProForm initialValues={currentRow} onFinish={handleCreateQuestionForm}>
+            <ProFormText
+              label="问题"
+              name="question"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入问题',
+                },
+              ]}
+            />
+            <ProFormTextArea
+              label="回答"
+              name="answer"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入回答',
+                },
+              ]}
+            />
+          </ProForm>
+        )}
+      </Drawer>
       <div className={styles.container}>
         <div className={styles.title}>
           <div>常见问题</div>
@@ -155,7 +203,7 @@ const Help: React.FC = () => {
               key="primary"
               onClick={() => {
                 setCurrentRow({});
-                setQuestionEditVisible(true);
+                setQuestionCreateVisible(true);
               }}
             >
               新建

@@ -66,6 +66,19 @@ const ActivityCreation: React.FC = () => {
       .then((data) => setHistoryActivity(data));
   };
 
+  const addTimeToActivity = (values: activity) => {
+    setActivityContent((preContent) => {
+      const newContent = {
+        ...values,
+        ...preContent,
+      };
+      newContent.startTime = newContent.dateRange[0];
+      newContent.endTime = newContent.dateRange[1];
+      delete newContent.dateRange;
+      console.log(newContent);
+      return newContent;
+    });
+  };
   const addContentToActivity = (values: activity) => {
     setActivityContent((preContent) => {
       if (values.term) {
@@ -94,7 +107,7 @@ const ActivityCreation: React.FC = () => {
   const steps = [
     {
       title: '设定时间',
-      content: <SetTime add={addContentToActivity} />,
+      content: <SetTime add={addTimeToActivity} />,
     },
     {
       title: '设定每日任务',
