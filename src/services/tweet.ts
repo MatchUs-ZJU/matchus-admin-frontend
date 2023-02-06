@@ -26,6 +26,16 @@ export async function publishTweet(tweetData: TweetsItem, options?: { [key: stri
     ...(options || {}),
   });
 }
+export async function createTweet(tweetData: TweetsItem, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/article`, {
+    method: 'POST',
+    data: {
+      ...tweetData,
+      mark: 0,
+    },
+    ...(options || {}),
+  });
+}
 
 export async function DeleteTweet(id: number, options?: { [key: string]: any }) {
   return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/article`, {

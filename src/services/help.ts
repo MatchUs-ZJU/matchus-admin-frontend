@@ -37,3 +37,14 @@ export async function editQuestionData(values: HelpItem, options?: { [key: strin
     ...(options || {}),
   });
 }
+
+export async function createQuestionData(values: HelpItem, options?: { [key: string]: any }) {
+  return request<API.ResponseData<API.NormalSuccessData>>(`${BASE_URL}/mainpage/help`, {
+    method: 'POST',
+    data: {
+      ...values,
+      mark: 0,
+    },
+    ...(options || {}),
+  });
+}

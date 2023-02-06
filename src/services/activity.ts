@@ -159,11 +159,9 @@ export async function getExportedTable(
   activityId: number | undefined,
   options?: { [key: string]: any },
 ) {
-  return request<BlobPart>(`${BASE_URL}/activity/outputData`, {
+  console.log('传的活动数据是', activityId);
+  return request<BlobPart>(`${BASE_URL}/activity/outputData?activityId=${activityId}`, {
     method: 'GET',
-    data: {
-      activityId,
-    },
     responseType: 'blob',
     ...(options || {}),
   });
