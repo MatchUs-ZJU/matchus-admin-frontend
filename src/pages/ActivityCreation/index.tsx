@@ -16,6 +16,8 @@ export type activity = {
   term?: string;
   startDate?: string;
   endDate?: string;
+  startTime?: string;
+  endTime?: string;
   signUpStartTime?: string;
   signUpStartDate?: string;
   signUpEndTime?: string;
@@ -43,10 +45,15 @@ const ActivityCreation: React.FC = () => {
   const handleFinishPublish = async () => {
     console.log(activityContent);
     const res = await publishActivity(activityContent);
+
     if (!res || !res.success) {
       message.error('创建活动失败', FAIL_MESSAGE_DURATION);
+      const actRes = await getHistoryActivity();
+      setHistoryActivity(actRes.data.data);
     } else {
       message.success('创建活动成功', SUCCESS_MESSAGE_DURATION);
+      const actRes = await getHistoryActivity();
+      setHistoryActivity(actRes.data.data);
     }
   };
   console.log(historyActivity);
@@ -63,7 +70,7 @@ const ActivityCreation: React.FC = () => {
     }
     getHistoryActivity()
       .then((response) => response.data)
-      .then((data) => setHistoryActivity(data));
+      .then((data) => setHistoryActivity(data.data));
   };
 
   const addTimeToActivity = (values: activity) => {
@@ -72,8 +79,10 @@ const ActivityCreation: React.FC = () => {
         ...values,
         ...preContent,
       };
-      newContent.startTime = newContent.dateRange[0];
-      newContent.endTime = newContent.dateRange[1];
+      newContent.startDate = newContent.dateRange[0];
+      newContent.endDate = newContent.dateRange[1];
+      newContent.startTime = '00:00:01';
+      newContent.endTime = '23:59:59';
       delete newContent.dateRange;
       console.log(newContent);
       return newContent;

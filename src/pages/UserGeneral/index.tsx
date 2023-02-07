@@ -48,6 +48,12 @@ const UserGeneral: React.FC = () => {
 
   const columns: ProColumns<UserGeneralInfoItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      fixed: 'left',
+    },
+    {
       title: '昵称',
       dataIndex: 'nickname',
       fixed: 'left',
@@ -94,14 +100,6 @@ const UserGeneral: React.FC = () => {
         1: {
           text: '在校生',
           status: 'Success',
-        },
-        2: {
-          text: '校友',
-          status: 'Error',
-        },
-        3: {
-          text: '校友',
-          status: 'Error',
         },
         4: {
           text: '校友',

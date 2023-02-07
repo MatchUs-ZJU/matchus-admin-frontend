@@ -64,6 +64,11 @@ const Help: React.FC = () => {
 
   const columnsArticle: ProColumns<HelpItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '序号',
       dataIndex: 'sequence',
       key: 'sequence',

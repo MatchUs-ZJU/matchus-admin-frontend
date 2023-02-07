@@ -208,6 +208,11 @@ const ActivityAdmin: React.FC = () => {
   // 匹配成功表格信息
   const successfulColumns: ProColumns<MatchResultItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '姓名',
       dataIndex: 'name',
     },
@@ -380,6 +385,11 @@ const ActivityAdmin: React.FC = () => {
   // 匹配失败表格信息
   const failColumns: ProColumns<MatchResultItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '姓名',
       dataIndex: 'name',
     },
@@ -477,6 +487,11 @@ const ActivityAdmin: React.FC = () => {
   // 出库用户表格信息
   const outColumns: ProColumns<MatchResultItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '姓名',
       dataIndex: 'name',
     },
@@ -546,6 +561,11 @@ const ActivityAdmin: React.FC = () => {
 
   // 匹配结果未出表格信息
   const noResultColumns: ProColumns<MatchResultItem>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
     {
       title: '姓名',
       dataIndex: 'name',
