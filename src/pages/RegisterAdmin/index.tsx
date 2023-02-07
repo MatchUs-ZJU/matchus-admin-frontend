@@ -116,6 +116,11 @@ const RegisterAdmin: React.FC = () => {
 
   const columns: ProColumns<UserRegisterInfoItem>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '用户姓名',
       dataIndex: 'realname',
     },
@@ -156,14 +161,6 @@ const RegisterAdmin: React.FC = () => {
         1: {
           text: '在校生',
           status: 'Success',
-        },
-        2: {
-          text: '校友',
-          status: 'Error',
-        },
-        3: {
-          text: '校友',
-          status: 'Error',
         },
         4: {
           text: '校友',

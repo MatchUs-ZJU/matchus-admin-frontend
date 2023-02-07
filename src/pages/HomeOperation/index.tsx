@@ -138,6 +138,11 @@ const HomeOperation: React.FC = () => {
 
   const columnsCarousel: ProColumns<API.CarouselData>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
       title: '序号',
       dataIndex: 'sequence',
       key: 'sequence',
@@ -174,6 +179,11 @@ const HomeOperation: React.FC = () => {
     },
   ];
   const columnsArticle: ProColumns<TweetsItem>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
     {
       title: '序号',
       dataIndex: 'sequence',

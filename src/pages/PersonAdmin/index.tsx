@@ -208,6 +208,7 @@ const PersonAdmin: React.FC = () => {
       message.success('更新幸运值记录成功', SUCCESS_MESSAGE_DURATION);
     }
     setLuckyInfo(freshRes.data);
+    actionRef?.current?.reloadAndRest?.();
   };
   const handleLuckDelete = async (luckyId: number) => {
     console.log(luckyId);
@@ -224,9 +225,16 @@ const PersonAdmin: React.FC = () => {
       message.success('更新幸运值记录成功', SUCCESS_MESSAGE_DURATION);
     }
     setLuckyInfo(freshRes.data);
+    actionRef?.current?.reloadAndRest?.();
   };
 
   const columns: ProColumns<PersonInfoItem>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      fixed: 'left',
+    },
     {
       title: '姓名',
       dataIndex: 'realname',
@@ -240,14 +248,6 @@ const PersonAdmin: React.FC = () => {
         1: {
           text: '在校生',
           status: 'Success',
-        },
-        2: {
-          text: '校友',
-          status: 'Error',
-        },
-        3: {
-          text: '校友',
-          status: 'Error',
         },
         4: {
           text: '校友',

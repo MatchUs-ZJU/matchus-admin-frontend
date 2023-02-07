@@ -24,7 +24,7 @@ const SetTime = ({ add }) => {
           <ProFormTimePicker name="signUpStartTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormDatePicker name="signUpEndTime" label="报名结束时间" />
+          <ProFormDatePicker name="signUpEndDate" label="报名结束时间" />
           <ProFormTimePicker name="signUpEndTime" label="" />
         </ProForm.Group>
         <ProForm.Group>
