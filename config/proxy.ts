@@ -9,7 +9,7 @@
 export default {
   dev: {
     '/api/': {
-      target: 'https://admin-test-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
+      target: 'https://admin-prod-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
       secure: false,
