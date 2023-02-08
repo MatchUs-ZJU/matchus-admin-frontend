@@ -15,6 +15,8 @@ export const getUserTypeText = (userType: number | undefined) => {
     return '校友';
   } else if (userType === 3) {
     return '校友';
+  } else if (userType === 4) {
+    return '校友';
   } else {
     return '未选择';
   }
