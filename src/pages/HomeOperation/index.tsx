@@ -504,16 +504,7 @@ const HomeOperation: React.FC = () => {
             ]}
           />
 
-          <ProFormText
-            label="活动参与人数"
-            name="participants"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your username!',
-              },
-            ]}
-          />
+          <ProFormText label="活动参与人数" name="participants" />
         </ProForm>
       </div>
       <div className={styles.container}>
