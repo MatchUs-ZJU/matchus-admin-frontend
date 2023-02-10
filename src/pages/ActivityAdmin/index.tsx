@@ -251,6 +251,20 @@ const ActivityAdmin: React.FC = () => {
       hideInSearch: true,
     },
     {
+      title: '是否二次匹配',
+      dataIndex: 'isTwice',
+      valueEnum: {
+        0: {
+          text: '否',
+          status: 'Error',
+        },
+        1: {
+          text: '是',
+          status: 'Success',
+        },
+      },
+    },
+    {
       title: '回答天数',
       dataIndex: 'answerDay',
       valueEnum: {
@@ -660,6 +674,15 @@ const ActivityAdmin: React.FC = () => {
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
+        <a
+          key="matchDetail"
+          onClick={() => {
+            setCurrentRow(record);
+            setMatchDetailDrawerVisible(true);
+          }}
+        >
+          匹配信息
+        </a>,
         <a
           key="out"
           onClick={async () => {
