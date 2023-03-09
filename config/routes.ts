@@ -44,11 +44,6 @@ export default [
             name: '个人信息',
             component: './PersonAdmin',
           },
-          {
-            path: 'activity',
-            name: '活动信息',
-            component: './ActivityAdmin',
-          },
         ],
       },
       {
@@ -57,14 +52,26 @@ export default [
         icon: 'ControlOutlined',
         routes: [
           {
-            path: 'homeoperation',
-            name: '首页运营',
-            component: './HomeOperation',
+            path: 'activity',
+            name: '活动信息',
+            component: './ActivityAdmin',
           },
           {
             path: 'activitycreation',
             name: '活动创建',
             component: './ActivityCreation',
+          },
+        ],
+      },
+      {
+        path: 'setting',
+        name: '其他',
+        icon: 'SettingOutlined',
+        routes: [
+          {
+            path: 'homeoperation',
+            name: '首页运营',
+            component: './HomeOperation',
           },
           {
             path: 'help',
