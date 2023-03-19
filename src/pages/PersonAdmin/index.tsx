@@ -26,7 +26,7 @@ import {
   DownCircleOutlined,
 } from '@ant-design/icons';
 import { PersonInfoItem } from '@/pages/PersonAdmin/data';
-import { getPersonalInfo, rateAppearance } from '@/services/users';
+import { getPersonalInfo, getUserAIScore, rateAppearance } from '@/services/users';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
 import DescriptionItem from '@/components/DescriptionItem';
 import { getGenderText, getUserTypeText } from '@/utils/format';
@@ -136,6 +136,7 @@ const PersonAdmin: React.FC = () => {
   const [currentRating, setCurrentRating] = useState<number>(0);
   const [luckyNumberEditVisible, setluckyNumberEditVisible] = useState<boolean>(false);
   const [luckyInfo, setLuckyInfo] = useState<luckyInfoOfUser>({});
+  const [AIscore, setAIscore] = useState<number>(0);
 
   // FETCH 学院信息
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
@@ -350,7 +351,15 @@ const PersonAdmin: React.FC = () => {
       render: (_, record) => [
         <a
           key="rate"
-          onClick={() => {
+          onClick={async () => {
+            const res = await getUserAIScore(Number(record.id));
+            if (!res || !res.success) {
+              message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
+            } else {
+              message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
+            }
+            console.log(res?.data);
+            setAIscore(res?.data);
             setRatingDrawerVisible(true);
             setCurrentRow(record);
           }}
@@ -517,6 +526,11 @@ const PersonAdmin: React.FC = () => {
         <Row>
           <Col span={24}>
             <DescriptionItem title="姓名" content={currentRow?.realname} />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <DescriptionItem title="ai打分" content={AIscore} />
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
