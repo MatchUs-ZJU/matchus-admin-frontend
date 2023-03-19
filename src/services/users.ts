@@ -188,6 +188,16 @@ export function getUserLuckRecord(userId?: number, options?: { [key: string]: an
   });
 }
 
+export function getUserAIScore(userId?: number, options?: { [key: string]: any }) {
+  return request<API.ResponseData<number>>(`${BASE_URL}/user/ai`, {
+    method: 'GET',
+    params: {
+      userId,
+    },
+    ...(options || {}),
+  });
+}
+
 export async function editUserLuck(
   values: luckyEditInfo,
   userId: number,
