@@ -8,6 +8,7 @@ export type MatchResultItem = {
   surveyComplete: number,
   out: number,
   refund: number,
+  userType: number,
 } & MatchSuccessInfo & MatchFailInfo
 
 export type MatchSuccessInfo = {
@@ -16,13 +17,15 @@ export type MatchSuccessInfo = {
   matchStudentNumber: string,
   answerDay: number,
   twc: number,
-  twcResult: number
-  isTwice: boolean
+  twcResult: number,
+  isTwice: boolean,
+  userType: number,
 }
 
 export type MatchFailInfo = {
   proportion?: number,
   reason: string,
+  userType: number,
 }
 
 export type UserMatchInfo = {
