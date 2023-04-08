@@ -16,7 +16,7 @@ import {
   Alert,
   Modal,
   Dropdown,
-  Menu,
+  Menu, Form, Input,
 } from 'antd';
 import {
   DownOutlined,
@@ -546,6 +546,13 @@ const PersonAdmin: React.FC = () => {
             <Radio.Button value={4}>前50-70%</Radio.Button>
             <Radio.Button value={5}>前70-100%</Radio.Button>
           </Radio.Group>
+          // <Form.Item
+          // label="分值"
+          // name="appearance"
+          // rules={[{ required: true, message: '分值不可为空' }]}
+          // >
+          // <Input />
+          // </Form.Item>
         )}
         <Space style={{ marginTop: '24px' }}>
           <Button
