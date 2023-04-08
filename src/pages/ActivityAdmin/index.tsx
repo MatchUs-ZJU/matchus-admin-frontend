@@ -245,6 +245,23 @@ const ActivityAdmin: React.FC = () => {
       filteredValue: filteredInfo.gender || null,
     },
     {
+      title: '用户类别',
+      dataIndex: 'userType',
+      valueEnum: {
+        1: {
+          text: '在校生',
+        },
+        4: {
+          text: '校友',
+        },
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string);
+      },
+      filteredValue: filteredInfo.userType || null,
+    },
+    {
       title: '匹配对象',
       dataIndex: 'matchName',
       hideInForm: true,
@@ -436,6 +453,23 @@ const ActivityAdmin: React.FC = () => {
       filteredValue: filteredInfo.gender || null,
     },
     {
+      title: '用户类别',
+      dataIndex: 'userType',
+      valueEnum: {
+        1: {
+          text: '在校生',
+        },
+        4: {
+          text: '校友',
+        },
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string);
+      },
+      filteredValue: filteredInfo.userType || null,
+    },
+    {
       title: '匹配人数比例',
       dataIndex: 'proportion',
       hideInForm: true,
@@ -538,6 +572,23 @@ const ActivityAdmin: React.FC = () => {
       filteredValue: filteredInfo.gender || null,
     },
     {
+      title: '用户类别',
+      dataIndex: 'userType',
+      valueEnum: {
+        1: {
+          text: '在校生',
+        },
+        4: {
+          text: '校友',
+        },
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string);
+      },
+      filteredValue: filteredInfo.userType || null,
+    },
+    {
       title: '退款结果',
       dataIndex: 'refund',
       valueEnum: {
@@ -572,7 +623,6 @@ const ActivityAdmin: React.FC = () => {
       ],
     },
   ];
-
   // 匹配结果未出表格信息
   const noResultColumns: ProColumns<MatchResultItem>[] = [
     {
@@ -611,6 +661,23 @@ const ActivityAdmin: React.FC = () => {
         return numberFilter(record.gender, value as string);
       },
       filteredValue: filteredInfo.gender || null,
+    },
+    {
+      title: '用户类别',
+      dataIndex: 'userType',
+      valueEnum: {
+        1: {
+          text: '在校生',
+        },
+        4: {
+          text: '校友',
+        },
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return numberFilter(record.userType, value as string);
+      },
+      filteredValue: filteredInfo.userType || null,
     },
     {
       title: '问卷填写',
@@ -737,10 +804,10 @@ const ActivityAdmin: React.FC = () => {
                 actionRef?.current?.reloadAndRest?.();
               }}
             >
+              <Radio.Button value={MatchNoResultType}>报名用户</Radio.Button>
+              <Radio.Button value={MatchOutType}>出库用户</Radio.Button>
               <Radio.Button value={MatchSuccessType}>匹配成功</Radio.Button>
               <Radio.Button value={MatchFailType}>匹配失败</Radio.Button>
-              <Radio.Button value={MatchOutType}>出库用户</Radio.Button>
-              <Radio.Button value={MatchNoResultType}>参与活动用户</Radio.Button>
             </Radio.Group>
           ),
           actions: [

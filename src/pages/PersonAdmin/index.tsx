@@ -17,6 +17,8 @@ import {
   Modal,
   Dropdown,
   Menu,
+  Form,
+  Input,
 } from 'antd';
 import {
   DownOutlined,
@@ -70,9 +72,9 @@ const columnAttrList = [
   { column: '在校生：消费分担', dataIndex: 'consumptionShare' },
   { column: 'MBTI', dataIndex: 'mbti' },
   { column: '校友：学历', dataIndex: 'graduateEducation' },
-  { column: '校友：工作岗位', dataIndex: 'graduateWorkLocation' },
+  { column: '校友：工作地点', dataIndex: 'graduateWorkLocation' },
   { column: '校友：工作收入', dataIndex: 'graduateIncome' },
-  { column: '校友：工作细节', dataIndex: 'graduateWorkDetail' },
+  { column: '校友：工作岗位', dataIndex: 'graduateWorkDetail' },
 ];
 
 const getInitialColumnsState = () => {
@@ -408,10 +410,7 @@ const PersonAdmin: React.FC = () => {
     },
     {
       title: '学院',
-      dataIndex: 'faculty',
-      renderText: (_, record) => {
-        return faculties?.[(record.faculty as number) - 1]?.name;
-      },
+      dataIndex: 'name',
     },
   ];
 
@@ -549,6 +548,13 @@ const PersonAdmin: React.FC = () => {
             <Radio.Button value={4}>前50-70%</Radio.Button>
             <Radio.Button value={5}>前70-100%</Radio.Button>
           </Radio.Group>
+          // <Form.Item
+          // label="分值"
+          // name="appearance"
+          // rules={[{ required: true, message: '分值不可为空' }]}
+          // >
+          // <Input />
+          // </Form.Item>
         )}
         <Space style={{ marginTop: '24px' }}>
           <Button
@@ -592,14 +598,9 @@ const PersonAdmin: React.FC = () => {
           <Col span={12}>
             <DescriptionItem title="性别" content={getGenderText(currentRow?.gender)} />
           </Col>
-          <Col span={12}>
-            <DescriptionItem title="生日" content={currentRow?.birth} />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <DescriptionItem title="用户类型" content={getUserTypeText(currentRow?.userType)} />
-          </Col>
+          {/*<Col span={12}>*/}
+          {/*  <DescriptionItem title="生日" content={currentRow?.birth} />*/}
+          {/*</Col>*/}
           <Col span={12}>
             <DescriptionItem
               title="院系"
@@ -607,28 +608,59 @@ const PersonAdmin: React.FC = () => {
             />
           </Col>
         </Row>
+        <Row>
+          <Col span={12}>
+            <DescriptionItem title="用户类型" content={getUserTypeText(currentRow?.userType)} />
+          </Col>
+        </Row>
+
         {columnAttrList.map((_, index) => {
-          if (index % 2 == 0) {
-            return (
-              <Row>
-                <Col span={12}>
-                  <DescriptionItem
-                    title={columnAttrList[index].column}
-                    content={currentRow?.[columnAttrList[index].dataIndex] ?? '-'}
-                  />
-                </Col>
-                {index !== columnAttrList.length - 1 && (
+          if (getUserTypeText(currentRow?.userType) == '在校生') {
+            if (index % 2 == 0 && index < 26) {
+              return (
+                <Row>
                   <Col span={12}>
                     <DescriptionItem
-                      title={columnAttrList[index + 1].column}
-                      content={currentRow?.[columnAttrList[index + 1].dataIndex]}
+                      title={columnAttrList[index].column}
+                      content={currentRow?.[columnAttrList[index].dataIndex] ?? '-'}
                     />
                   </Col>
-                )}
-              </Row>
-            );
-          } else {
-            return <></>;
+                  {index !== columnAttrList.length - 1 && (
+                    <Col span={12}>
+                      <DescriptionItem
+                        title={columnAttrList[index + 1].column}
+                        content={currentRow?.[columnAttrList[index + 1].dataIndex]}
+                      />
+                    </Col>
+                  )}
+                </Row>
+              );
+            } else {
+              return <></>;
+            }
+          } else if (getUserTypeText(currentRow?.userType) == '校友') {
+            if (index % 2 == 0 && index < 30) {
+              return (
+                <Row>
+                  <Col span={12}>
+                    <DescriptionItem
+                      title={columnAttrList[index].column}
+                      content={currentRow?.[columnAttrList[index].dataIndex] ?? '-'}
+                    />
+                  </Col>
+                  {index !== columnAttrList.length - 1 && (
+                    <Col span={12}>
+                      <DescriptionItem
+                        title={columnAttrList[index + 1].column}
+                        content={currentRow?.[columnAttrList[index + 1].dataIndex]}
+                      />
+                    </Col>
+                  )}
+                </Row>
+              );
+            } else {
+              return <></>;
+            }
           }
         })}
       </Drawer>

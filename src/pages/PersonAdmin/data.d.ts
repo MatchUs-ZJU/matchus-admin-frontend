@@ -2,6 +2,7 @@ export type PersonInfoItem = {
   id: string;
   userType: number;
   faculty: number;
+  name: string;
   appearance: number;
   rate: number;
   realname: string;

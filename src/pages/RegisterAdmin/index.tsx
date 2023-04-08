@@ -432,7 +432,7 @@ const RegisterAdmin: React.FC = () => {
             >
               <Radio.Group>
                 <Radio value={1}>在校生</Radio>
-                <Radio value={2}>校友</Radio>
+                <Radio value={4}>校友</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
