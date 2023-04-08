@@ -142,6 +142,7 @@ export async function getPersonalInfo(
     phoneNumber?: string;
     wechatNumber?: string;
     faculty?: number;
+    name?: string;
     appearance?: number;
     rate?: number;
     pageIndex?: number;

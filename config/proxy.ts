@@ -7,9 +7,18 @@
  * https://pro.ant.design/docs/deploy
  */
 export default {
+  // dev: {
+  //   '/api/': {
+  //     target: 'https://admin-test-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
+  //     //target: 'https://admin-prod-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/api': '' },
+  //     secure: false,
+  //   },
+  // },
   dev: {
     '/api/': {
-      target: 'https://admin-test-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
+      target: 'http://localhost:8080/',
       //target: 'https://admin-prod-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
