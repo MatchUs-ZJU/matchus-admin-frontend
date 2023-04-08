@@ -16,7 +16,9 @@ import {
   Alert,
   Modal,
   Dropdown,
-  Menu, Form, Input,
+  Menu,
+  Form,
+  Input,
 } from 'antd';
 import {
   DownOutlined,
@@ -613,7 +615,7 @@ const PersonAdmin: React.FC = () => {
         </Row>
 
         {columnAttrList.map((_, index) => {
-          if(getUserTypeText(currentRow?.userType)=="在校生"){
+          if (getUserTypeText(currentRow?.userType) == '在校生') {
             if (index % 2 == 0 && index < 26) {
               return (
                 <Row>
@@ -636,7 +638,7 @@ const PersonAdmin: React.FC = () => {
             } else {
               return <></>;
             }
-          }else if(getUserTypeText(currentRow?.userType)=="校友"){
+          } else if (getUserTypeText(currentRow?.userType) == '校友') {
             if (index % 2 == 0 && index < 30) {
               return (
                 <Row>
