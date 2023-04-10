@@ -132,6 +132,7 @@ const PersonAdmin: React.FC = () => {
   const [columnsState, setColumnsState] =
     useState<Record<string, ColumnsState>>(getInitialColumnsState);
   const [ratingDrawerVisible, setRatingDrawerVisible] = useState<boolean>(false);
+  // const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [detailDrawerVisible, setDetailDrawerVisible] = useState<boolean>(false);
   const [confirmRatingModalVisible, setConfirmRatingModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<PersonInfoItem>();
@@ -171,6 +172,7 @@ const PersonAdmin: React.FC = () => {
 
   const handleConfirmRating = async (notCorrect?: boolean) => {
     setRatingDrawerVisible(false);
+    // setEditDrawerVisible(false);
 
     if (notCorrect) {
       const res = await rateAppearance(currentRow?.id as string, -1);
@@ -363,6 +365,7 @@ const PersonAdmin: React.FC = () => {
             console.log(res?.data);
             setAIscore(res?.data);
             setRatingDrawerVisible(true);
+            // setEditDrawerVisible(true);
             setCurrentRow(record);
           }}
         >
@@ -514,9 +517,11 @@ const PersonAdmin: React.FC = () => {
         width={600}
         onClose={() => {
           setRatingDrawerVisible(false);
+          // setEditDrawerVisible(false);
           setCurrentRow(undefined);
         }}
         visible={ratingDrawerVisible}
+        // visible={editDrawerVisible}
         bodyStyle={{ paddingBottom: 80 }}
         afterVisibleChange={() => {
           setCurrentRating(0);
@@ -530,6 +535,9 @@ const PersonAdmin: React.FC = () => {
         <Row>
           <Col span={24}>
             <DescriptionItem title="ai打分" content={AIscore} />
+          </Col>
+          <Col span={24}>
+            <DescriptionItem title="建议档位" content={AIscore>70?"前0-10%":AIscore>60?"前0-10% 或 前10-30%":AIscore>40?"前10-30% 或 前30-50%":AIscore>30?"前30-50% 或 前50-70% 或 前70-100%":"前70-100%"} />
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
@@ -548,14 +556,18 @@ const PersonAdmin: React.FC = () => {
             <Radio.Button value={4}>前50-70%</Radio.Button>
             <Radio.Button value={5}>前70-100%</Radio.Button>
           </Radio.Group>
-          // <Form.Item
-          // label="分值"
-          // name="appearance"
-          // rules={[{ required: true, message: '分值不可为空' }]}
-          // >
-          // <Input />
-          // </Form.Item>
         )}
+        {/*{editDrawerVisible && (*/}
+        {/*  <Form.Item*/}
+        {/*    label="分值"*/}
+        {/*    name="appearance"*/}
+        {/*    rules={[{ required: true, message: '分值不可为空' }]}*/}
+        {/*    onChange={(e) => setCurrentRating(e.target.value)}*/}
+        {/*  >*/}
+        {/*    <Input />*/}
+        {/*  </Form.Item>*/}
+        {/*)}*/}
+
         <Space style={{ marginTop: '24px' }}>
           <Button
             type="primary"
