@@ -1,0 +1,98 @@
+.cardPlus {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 284px;
+  height: 160px;
+  margin-right: 13px;
+  background-color: white;
+  border-radius: 10px;
+  transition: all;
+  transition-duration: 0.5s;
+  &:hover {
+    cursor: pointer;
+    opacity: 30%;
+  }
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 284px;
+  height: 160px;
+  margin-right: 13px;
+  background-color: white;
+  border-radius: 10px;
+  .time {
+    margin-top: 10px;
+    padding-left: 60px;
+    color: gray;
+    font-size: 17px;
+    .date {
+      color: black;
+      font-size: 15px;
+    }
+  }
+
+  .top {
+    display: flex;
+    margin-top: 16px;
+    margin-left: 24px;
+    font-size: 20px;
+    .alert {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 62px;
+      margin-right: 10px;
+      color: #52c41a;
+      font-size: 14px;
+      border: 1px solid #b7eb8f;
+      border-radius: 99px;
+    }
+  }
+  .iconcontainer {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 12px;
+    font-size: large;
+    .icon {
+      color: gray;
+      &:hover {
+        cursor: pointer;
+        opacity: 50%;
+        transition: all;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 0.5s;
+      }
+    }
+  }
+}
+.steps {
+  margin-top: 20px;
+  padding: 40px 188px 38px 188px;
+  background-color: white;
+  border-radius: 10px;
+  .content {
+    width: 548px;
+    height: 460px;
+    margin-top: 40px;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 10px;
+  }
+}
+
+.tips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 600px;
+  margin-top: 20px;
+  color: #cfcfc4;
+  font-weight: bold;
+  font-size: 30px;
+  background-color: white;
+  border-radius: 10px;
+}

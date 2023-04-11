@@ -1,24 +1,24 @@
 declare namespace API {
   type ResponseData<T> = {
-    msg: string,
-    data: T,
-    code: string,
-    success: boolean,
-  }
+    msg: string;
+    data: T;
+    code: string;
+    success: boolean;
+  };
 
   type NormalSuccessData = {
-    success: boolean
-  }
+    success: boolean;
+  };
 
   type LoginParams = {
     username?: string;
     password?: string;
     autoLogin?: boolean;
-    type?: string,
+    type?: string;
   };
 
   type LoginResult = {
-    token?: string
+    token?: string;
   };
 
   type CurrentUser = {
@@ -34,11 +34,11 @@ declare namespace API {
   };
 
   type PaginationResult = {
-    total?: number,   // 数据总数
-    size?: number,    // 页容量
-    current?: number, // 当前页
-    pages?: number,   // 总页数
-  }
+    total?: number; // 数据总数
+    size?: number; // 页容量
+    current?: number; // 当前页
+    pages?: number; // 总页数
+  };
 
   type RuleListItem = {
     key?: number;
@@ -144,5 +144,17 @@ declare namespace API {
     code?: number;
     type?: string;
     message?: string;
+  };
+  type HistoryData = {
+    id?: number;
+    totalTerm?: number;
+    matchs?: number;
+    participants?: number;
+    unavailable?: number;
+  };
+  type CarouselData = {
+    id?: number;
+    image?: string;
+    sequence?: number;
   };
 }
