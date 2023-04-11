@@ -20,6 +20,7 @@ export type PersonInfoItem = {
   oneYearStatus: string;
   futureBase: string;
   selfFutureBase: string;
+  currentSchoolStatus: string;
   currentSchoolGrade: string;
   currentSchoolCampus: string;
   schoolGraduateInSep: string;
