@@ -1,8 +1,8 @@
 @import (reference) '~antd/es/style/themes/index';
 
 .wrapper {
-  margin-bottom: 7px;
-  color: rgba(0, 0, 0, 0.65);
+  margin: 10px 10px;
+  color: rgba(0, 0, 0, 0.7);
   font-size: 14px;
   line-height: 1.5715;
 }
@@ -10,5 +10,21 @@
 .label {
   display: inline-block;
   margin-right: 8px;
-  color: rgba(0, 0, 0, 0.85);
+  color: rgba(0, 0, 0, 0.3);
+  background-image: linear-gradient(to right, #eee0e5, #eee0e5 50%, #f5e7e7);
+  background-size: 100% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  border-radius: 2px;
+}
+
+.label::before {
+  content: '♡';
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  color: #eee0e5;
+  text-shadow: 0.5px 0.5px 0.1px #eeb4b4;
 }

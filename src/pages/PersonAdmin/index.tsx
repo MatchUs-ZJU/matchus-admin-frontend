@@ -53,6 +53,7 @@ const columnAttrList = [
   { column: '手机号', dataIndex: 'phoneNumber' },
   { column: '微信号', dataIndex: 'wechatNumber' },
   { column: '校区', dataIndex: 'currentSchoolCampus' },
+  { column: '学历', dataIndex: 'currentSchoolStatus' },
   { column: '年级', dataIndex: 'currentSchoolGrade' },
   { column: '行业', dataIndex: 'industry' },
   { column: '是否九月毕业', dataIndex: 'schoolGraduateInSep' },
@@ -628,7 +629,7 @@ const PersonAdmin: React.FC = () => {
 
         {columnAttrList.map((_, index) => {
           if (getUserTypeText(currentRow?.userType) == '在校生') {
-            if (index % 2 == 0 && index < 26) {
+            if (index % 2 == 0 && index < 27) {
               return (
                 <Row>
                   <Col span={12}>
@@ -651,7 +652,7 @@ const PersonAdmin: React.FC = () => {
               return <></>;
             }
           } else if (getUserTypeText(currentRow?.userType) == '校友') {
-            if (index % 2 == 0 && index < 30) {
+            if (index % 2 == 0 && index < 31) {
               return (
                 <Row>
                   <Col span={12}>
