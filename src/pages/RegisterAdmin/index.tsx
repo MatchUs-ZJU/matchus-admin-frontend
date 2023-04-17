@@ -18,6 +18,7 @@ import {
   Select,
   Space,
 } from 'antd';
+const Option = Select.Option;
 import { ExportOutlined } from '@ant-design/icons';
 import { getUserRegisterInfo, checkRegisterInfo, editRegisterInfo } from '@/services/users';
 import type { UserRegisterInfoItem } from '@/pages/RegisterAdmin/data';
@@ -384,6 +385,7 @@ const RegisterAdmin: React.FC = () => {
             style={{ width: '300px' }}
             placeholder="请选择失败理由"
             onChange={(v) => setDenyReasons(v)}
+            value={denyReasons}
           >
             {denyReasonChoices}
           </Select>
