@@ -155,6 +155,7 @@ const ActivityAdmin: React.FC = () => {
     const res = await outPool(
       currentReqActivity?.id as number,
       record.studentNumber as string,
+      record.id as string,
       out,
     );
     if (!res || !res.success) {
@@ -769,7 +770,7 @@ const ActivityAdmin: React.FC = () => {
             );
           }}
         >
-          修改问卷状态
+          <span style={{ color: '#808080' }}>修改问卷状态</span>
         </a>,
         <a
           key="refund"

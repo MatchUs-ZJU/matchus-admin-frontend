@@ -79,6 +79,7 @@ export async function modifySurveyState(
 export async function outPool(
   activityId: string | number,
   studentNumber: string,
+  userId: string,
   out: number,
   options?: { [key: string]: any },
 ) {
@@ -87,6 +88,7 @@ export async function outPool(
     data: {
       activityId,
       studentNumber,
+      userId,
       out,
     },
     ...(options || {}),
