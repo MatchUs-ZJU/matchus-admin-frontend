@@ -165,7 +165,7 @@ const ActivityCreation: React.FC = () => {
           </svg>
         </div>
         {historyActivity.map((activity) => (
-          <Card key={activity.term} {...activity} handleDeleteActivity={handleDeleteActivity} />
+          <Card key={activity.term} {...activity} editActivity={addNewActivity} />
         ))}
       </div>
 

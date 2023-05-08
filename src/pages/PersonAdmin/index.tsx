@@ -28,7 +28,7 @@ import {
   DownCircleOutlined,
 } from '@ant-design/icons';
 import { PersonInfoItem } from '@/pages/PersonAdmin/data';
-import { getPersonalInfo, getUserAIScore, rateAppearance } from '@/services/users';
+import {getPersonalInfo, getUserAIScore, getUserAppearancePair, rateAppearance} from '@/services/users';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
 import DescriptionItem from '@/components/DescriptionItem';
 import { getGenderText, getUserTypeText } from '@/utils/format';
@@ -126,6 +126,10 @@ export type luckyEditInfo = {
   reason?: string;
   subtotal?: number;
 };
+export type userAppearancePair = {
+  aiAppearance?: number;
+  appearance?: number;
+};
 
 const PersonAdmin: React.FC = () => {
   const actionRef = useRef<ActionType>();
@@ -133,7 +137,6 @@ const PersonAdmin: React.FC = () => {
   const [columnsState, setColumnsState] =
     useState<Record<string, ColumnsState>>(getInitialColumnsState);
   const [ratingDrawerVisible, setRatingDrawerVisible] = useState<boolean>(false);
-  // const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [detailDrawerVisible, setDetailDrawerVisible] = useState<boolean>(false);
   const [confirmRatingModalVisible, setConfirmRatingModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<PersonInfoItem>();
@@ -141,6 +144,7 @@ const PersonAdmin: React.FC = () => {
   const [luckyNumberEditVisible, setluckyNumberEditVisible] = useState<boolean>(false);
   const [luckyInfo, setLuckyInfo] = useState<luckyInfoOfUser>({});
   const [AIscore, setAIscore] = useState<number>(0);
+  const [userAppearancePair, setUserAppearancePair] = useState<userAppearancePair>({});
 
   // FETCH 学院信息
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
@@ -233,6 +237,8 @@ const PersonAdmin: React.FC = () => {
     setLuckyInfo(freshRes.data);
     actionRef?.current?.reloadAndRest?.();
   };
+
+  const appearanceMap = new Map([[1,'前0-10%'],[2,'前10-30%'],[3, '前30-50%'],[4, '前50-70%'],[5,'前70-100%']]);
 
   const columns: ProColumns<PersonInfoItem>[] = [
     {
@@ -357,16 +363,24 @@ const PersonAdmin: React.FC = () => {
         <a
           key="rate"
           onClick={async () => {
-            const res = await getUserAIScore(Number(record.id));
-            if (!res || !res.success) {
-              message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
-            } else {
-              message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
-            }
+            // const res = await getUserAIScore(Number(record.id));
+            // if (!res || !res.success) {
+            //   message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
+            // } else {
+            //   message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
+            // }
+            // console.log(res?.data);
+            // setAIscore(res?.data);
+            const res = await getUserAppearancePair(Number(record.id));
+            // if(!res || !res.success){
+            //   message.error('获取用户appearance或ai_appearance失败', FAIL_MESSAGE_DURATION);
+            // }else{
+            //   message.success('获取该用户appearance与ai_appearance成功', SUCCESS_MESSAGE_DURATION);
+            // }
             console.log(res?.data);
-            setAIscore(res?.data);
+            setUserAppearancePair(res?.data);
+
             setRatingDrawerVisible(true);
-            // setEditDrawerVisible(true);
             setCurrentRow(record);
           }}
         >
@@ -518,7 +532,6 @@ const PersonAdmin: React.FC = () => {
         width={600}
         onClose={() => {
           setRatingDrawerVisible(false);
-          // setEditDrawerVisible(false);
           setCurrentRow(undefined);
         }}
         visible={ratingDrawerVisible}
@@ -533,12 +546,20 @@ const PersonAdmin: React.FC = () => {
             <DescriptionItem title="姓名" content={currentRow?.realname} />
           </Col>
         </Row>
+        {/*<Row>*/}
+        {/*  <Col span={24}>*/}
+        {/*    <DescriptionItem title="ai打分" content={AIscore} />*/}
+        {/*  </Col>*/}
+        {/*  <Col span={24}>*/}
+        {/*    <DescriptionItem title="建议档位" content={AIscore>70?"前0-10%":AIscore>60?"前0-10% 或 前10-30%":AIscore>40?"前10-30% 或 前30-50%":AIscore>30?"前30-50% 或 前50-70% 或 前70-100%":"前70-100%"} />*/}
+        {/*  </Col>*/}
+        {/*</Row>*/}
         <Row>
           <Col span={24}>
-            <DescriptionItem title="ai打分" content={AIscore} />
+            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance} />
           </Col>
           <Col span={24}>
-            <DescriptionItem title="建议档位" content={AIscore>70?"前0-10%":AIscore>60?"前0-10% 或 前10-30%":AIscore>40?"前10-30% 或 前30-50%":AIscore>30?"前30-50% 或 前50-70% 或 前70-100%":"前70-100%"} />
+            <DescriptionItem title="当前档位" content={(userAppearancePair.appearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)} />
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
@@ -558,16 +579,6 @@ const PersonAdmin: React.FC = () => {
             <Radio.Button value={5}>前70-100%</Radio.Button>
           </Radio.Group>
         )}
-        {/*{editDrawerVisible && (*/}
-        {/*  <Form.Item*/}
-        {/*    label="分值"*/}
-        {/*    name="appearance"*/}
-        {/*    rules={[{ required: true, message: '分值不可为空' }]}*/}
-        {/*    onChange={(e) => setCurrentRating(e.target.value)}*/}
-        {/*  >*/}
-        {/*    <Input />*/}
-        {/*  </Form.Item>*/}
-        {/*)}*/}
 
         <Space style={{ marginTop: '24px' }}>
           <Button

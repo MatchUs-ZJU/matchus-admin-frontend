@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.less';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
-const Card = ({ term, startDate, endDate, handleDeleteActivity }) => {
+const Card = ({ term, startDate, endDate, editActivity }) => {
   return (
     <div>
       <div className={styles.card}>
@@ -19,10 +19,10 @@ const Card = ({ term, startDate, endDate, handleDeleteActivity }) => {
             {endDate}
           </div>
         </div>
-        {/* <div className={styles.iconcontainer}>
-          <DeleteOutlined className={styles.icon} onClick={() => handleDeleteActivity(term)} />
-          <EditOutlined className={styles.icon} />
-        </div> */}
+        <div className={styles.iconcontainer}>
+          {/*<DeleteOutlined className={styles.icon} onClick={() => handleDeleteActivity(term)} />*/}
+          <EditOutlined className={styles.icon} onClick={editActivity}/>
+        </div>
       </div>
     </div>
   );
