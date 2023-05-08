@@ -30,7 +30,6 @@ import DailyQuestions from '@/pages/ActivityAdmin/DailyQuestions';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import styles from './index.less';
 import { getExportedExample, getExportedTable } from '@/services/activity';
-import { BASE_URL } from '@/services/utils';
 import { uploadFile } from '@/services/activity';
 
 const MatchSuccessType = 0,
