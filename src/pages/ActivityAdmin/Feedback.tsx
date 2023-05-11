@@ -27,7 +27,14 @@ const DailyFeedback = (props: DailyFeedbackProps) => {
       message.warn('不能选择未提交');
       return;
     }
-    updateFeedbackInfo(activity?.id as number, Number(values?.id), selectedValue);
+    const data = await updateFeedbackInfo(
+      activity?.id as number,
+      Number(values?.id),
+      selectedValue,
+    );
+    if (Number(data.code) === 0) {
+      message.success('成功');
+    }
   };
 
   // FETCH 用户个人信息
@@ -62,11 +69,22 @@ const DailyFeedback = (props: DailyFeedbackProps) => {
     );
   }
 
+  let options = [{ value: 0, label: '未提交' }];
+  if (!!feedback?.options) {
+    options = feedback?.options.map((option) => {
+      return {
+        value: option.code,
+        label: option.description,
+      };
+    });
+  }
+
   return (
     <Drawer title="每日反馈详情" width={700} onClose={onClose} visible={visible}>
       <div className={styles.usernameContainer}>
         <div className={styles.username}>{values?.name}</div>
       </div>
+      <Row>{'反馈状态：' + feedback?.state?.description}</Row>
       <Row>
         <Col>A:</Col>
         <Col>{feedback?.type?.description}</Col>
@@ -80,12 +98,7 @@ const DailyFeedback = (props: DailyFeedbackProps) => {
           ))}
       </Row>
       <Select
-        options={feedback?.options.map((option) => {
-          return {
-            value: option.code,
-            label: option.description,
-          };
-        })}
+        options={options}
         onChange={(value) => {
           setSelect(value);
         }}
