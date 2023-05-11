@@ -191,23 +191,46 @@ export async function uploadFile(activityId: number, file: File, options?: { [ke
 }
 
 export async function getFeedbackInfo(activityId: number, userId: number) {
-  console.log('更新了每日反馈信息')
+  console.log('更新了每日反馈信息');
   return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`, {
     method: 'GET',
     params: {
       activityId,
-      userId
+      userId,
     },
   });
 }
 
-export async function updateFeedbackInfo(activityId: number, userId: number,code: number,options?: { [key: string]: any },) {
-  return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`,{
+export async function updateFeedbackInfo(
+  activityId: number,
+  userId: number,
+  code: number,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`, {
     method: 'POST',
     data: {
       activityId: activityId,
       userId: userId,
-      code: code
+      code: code,
+    },
+    ...(options || {}),
+  });
+}
+
+export async function refundOne(
+  activityId: number,
+  userId: number,
+  reason: string = '活动退款',
+  options?: { [key: string]: any },
+) {
+
+  return request<API.ResponseData<API.DefaultResponse>>(`${BASE_URL}/activity/refund`, {
+    method: 'POST',
+    data: {
+      activityId: activityId,
+      userId: userId,
+      reason: reason
     },
     ...(options || {}),
   });
