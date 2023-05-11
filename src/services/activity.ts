@@ -189,3 +189,14 @@ export async function uploadFile(activityId: number, file: File, options?: { [ke
     requestType: 'form',
   });
 }
+
+export async function getFeedbackInfo(activityId: number, userId: number) {
+  console.log('更新了每日反馈信息')
+  return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`, {
+    method: 'GET',
+    params: {
+      activityId,
+      userId
+    },
+  });
+}

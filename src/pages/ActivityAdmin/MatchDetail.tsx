@@ -1,9 +1,9 @@
-import {Divider, Drawer, message, Row} from "antd";
-import {ActivityItem} from "@/pages/data";
-import {MatchResultItem} from "@/pages/ActivityAdmin/data";
-import {useRequest} from "@@/plugin-request/request";
-import {PageLoading} from "@ant-design/pro-components";
-import {getUserMatchInfo} from "@/services/activity";
+import { Divider, Drawer, message, Row } from "antd";
+import { ActivityItem } from "@/pages/data";
+import { MatchResultItem } from "@/pages/ActivityAdmin/data";
+import { useRequest } from "@@/plugin-request/request";
+import { PageLoading } from "@ant-design/pro-components";
+import { getUserMatchInfo } from "@/services/activity";
 
 interface MatchDetailProps {
   activity: ActivityItem | undefined
@@ -14,12 +14,12 @@ interface MatchDetailProps {
 
 const MatchDetail = (props: MatchDetailProps) => {
 
-  const {visible, onClose, values, activity} = props
+  const { visible, onClose, values, activity } = props
 
   // FETCH 用户个人信息
-  const {loading, error, data: userInfo} =
+  const { loading, error, data: userInfo } =
     useRequest(() => {
-        return getUserMatchInfo({activityId: activity?.id as number, studentNumber: values?.studentNumber as string})
+      return getUserMatchInfo({ activityId: activity?.id as number, studentNumber: values?.studentNumber as string })
     }, {
       formatResult: res => res?.data.matchInfo.info,
       ready: visible,
@@ -36,7 +36,7 @@ const MatchDetail = (props: MatchDetailProps) => {
         width={400}
         visible={visible && loading && !error}
       >
-        <PageLoading/>
+        <PageLoading />
       </Drawer>
     )
   }
@@ -63,7 +63,7 @@ const MatchDetail = (props: MatchDetailProps) => {
                   fields.fields.map((field) => {
                     return (
                       <>
-                        <Row style={{fontSize: '14px', lineHeight: '24px'}}>{field.key}</Row>
+                        <Row style={{ fontSize: '14px', lineHeight: '24px' }}>{field.key}</Row>
                         <Row style={{
                           fontSize: '14px',
                           lineHeight: '24px',
@@ -73,7 +73,7 @@ const MatchDetail = (props: MatchDetailProps) => {
                     )
                   })
                 }
-                <Divider/>
+                <Divider />
               </>
             )
           }) :

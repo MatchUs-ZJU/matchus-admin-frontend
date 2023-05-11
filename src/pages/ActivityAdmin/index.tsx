@@ -26,6 +26,7 @@ import {
 } from '@/utils/constant';
 import type { FilterValue, SorterResult } from 'antd/es/table/interface';
 import MatchDetail from '@/pages/ActivityAdmin/MatchDetail';
+import DailyFeedback from '@/pages/ActivityAdmin/Feedback';
 import DailyQuestions from '@/pages/ActivityAdmin/DailyQuestions';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import styles from './index.less';
@@ -51,6 +52,7 @@ const ActivityAdmin: React.FC = () => {
   const [reqActivity, setReqActivity] = useState<ActivityItem | undefined>(undefined);
   const [modifyReasonDrawerVisible, setModifyReasonDrawerVisible] = useState<boolean>(false);
   const [matchDetailDrawerVisible, setMatchDetailDrawerVisible] = useState<boolean>(false);
+  const [dailyFeedbackDrawerVisible, setDailyFeedbackDrawerVisible] = useState<boolean>(false);
   const [dailyQuestionDrawerVisible, setDailyQuestionDrawerVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<MatchResultItem | undefined>(undefined);
   const [failReason, setFailReason] = useState<string>('');
@@ -308,6 +310,26 @@ const ActivityAdmin: React.FC = () => {
       filteredValue: filteredInfo.answerDay || null,
     },
     {
+      title: '反馈状态',
+      dataIndex: 'feedbackStatus',
+      valueEnum: {
+        notSubmitted: {
+          text: '未提交',
+        },
+        notFeedback: {
+          text: '未反馈',
+        },
+        feedbacked: {
+          text: '已反馈',
+        },
+      },
+      filters: true,
+      onFilter: (value, record) => {
+        return record.feedbackStatus === value;
+      },
+      filteredValue: filteredInfo.feedbackStatus || null,
+    },
+    {
       title: '双选操作',
       dataIndex: 'twc',
       valueEnum: {
@@ -379,6 +401,15 @@ const ActivityAdmin: React.FC = () => {
           }}
         >
           匹配信息
+        </a>,
+        <a
+          key="dailyFeedback"
+          onClick={() => {
+            setCurrentRow(record);
+            setDailyFeedbackDrawerVisible(true);
+          }}
+        >
+          每日反馈
         </a>,
         <a
           key="dailyQuestion"
@@ -858,10 +889,10 @@ const ActivityAdmin: React.FC = () => {
           reqType === MatchSuccessType
             ? successfulColumns
             : reqType === MatchFailType
-            ? failColumns
-            : reqType === MatchOutType
-            ? outColumns
-            : noResultColumns
+              ? failColumns
+              : reqType === MatchOutType
+                ? outColumns
+                : noResultColumns
         }
       />
       {matchDetailDrawerVisible && (
@@ -869,6 +900,17 @@ const ActivityAdmin: React.FC = () => {
           visible={matchDetailDrawerVisible}
           onClose={() => {
             setMatchDetailDrawerVisible(false);
+            setCurrentRow(undefined);
+          }}
+          activity={currentReqActivity}
+          values={currentRow}
+        />
+      )}
+      {dailyFeedbackDrawerVisible && (
+        <DailyFeedback
+          visible={dailyFeedbackDrawerVisible}
+          onClose={() => {
+            setDailyFeedbackDrawerVisible(false);
             setCurrentRow(undefined);
           }}
           activity={currentReqActivity}

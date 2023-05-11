@@ -157,4 +157,8 @@ declare namespace API {
     image?: string;
     sequence?: number;
   };
+  type FeedbackInfo = {
+    activityId: number
+    userId: number
+  }
 }
