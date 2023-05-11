@@ -16,6 +16,7 @@ import {
   modifyFailReason,
   modifySurveyState,
   outPool,
+  refundOne,
 } from '@/services/activity';
 import { PageLoading } from '@ant-design/pro-components';
 import {
@@ -59,6 +60,7 @@ const ActivityAdmin: React.FC = () => {
   const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
   const [sortedInfo, setSortedInfo] = useState<SorterResult<any>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRefundModalOpen, setIsRefundModalOpen] = useState<boolean>(false);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -71,6 +73,21 @@ const ActivityAdmin: React.FC = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  const handleRefundModalOk = async (activityId: number, userId: number) => {
+    const result = await refundOne(activityId, userId);
+    console.log(result)
+    if (!!result && result.data.success) {
+      message.success('提交退款成功');
+    }
+    setIsRefundModalOpen(false);
+  };
+
+  const showRefundModal = (record: MatchResultItem) => {
+    setCurrentRow(record);
+    setIsRefundModalOpen(true);
+  };
+
   // 加载活动列表
   // eslint-disable-next-line prefer-const
   let { loading, data: activityList } = useRequest(getActivityList, {
@@ -437,6 +454,7 @@ const ActivityAdmin: React.FC = () => {
           key="refund"
           onClick={() => {
             console.log('refund');
+            showRefundModal(record);
           }}
         >
           <span style={{ color: '#808080' }}>退款</span>
@@ -556,6 +574,7 @@ const ActivityAdmin: React.FC = () => {
           key="refund"
           onClick={() => {
             console.log('refund');
+            showRefundModal(record);
           }}
         >
           <span style={{ color: '#808080' }}>退款</span>
@@ -642,11 +661,12 @@ const ActivityAdmin: React.FC = () => {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: () => [
+      render: (_, record) => [
         <a
           key="refund"
           onClick={() => {
             console.log('refund');
+            showRefundModal(record);
           }}
         >
           <span style={{ color: '#808080' }}>退款</span>
@@ -889,10 +909,10 @@ const ActivityAdmin: React.FC = () => {
           reqType === MatchSuccessType
             ? successfulColumns
             : reqType === MatchFailType
-              ? failColumns
-              : reqType === MatchOutType
-                ? outColumns
-                : noResultColumns
+            ? failColumns
+            : reqType === MatchOutType
+            ? outColumns
+            : noResultColumns
         }
       />
       {matchDetailDrawerVisible && (
@@ -969,6 +989,16 @@ const ActivityAdmin: React.FC = () => {
             下载示例文件
           </Button>
         </div>
+      </Modal>
+      <Modal
+        title="确认退款"
+        open={isRefundModalOpen}
+        onOk={() => {
+          handleRefundModalOk(currentReqActivity.id, Number(currentRow?.id));
+        }}
+        onCancel={() => setIsRefundModalOpen(false)}
+      >
+        {'确认退款' + currentReqActivity?.name + '的' + currentRow?.name + '?'}
       </Modal>
     </PageContainer>
   );
