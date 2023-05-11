@@ -183,4 +183,8 @@ declare namespace API {
     type?: MatchFeedbackEnum;
     images?: COSFile[];
   };
+
+  type DefaultResponse = {
+    success: boolean
+  }
 }
