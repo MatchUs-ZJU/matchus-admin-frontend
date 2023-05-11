@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { ActionType, ColumnsState, ProTable } from '@ant-design/pro-table';
-import { ProForm, ProFormText } from '@ant-design/pro-form';
+import { ProForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import type { ProColumns } from '@ant-design/pro-table';
 import {
   Radio,
@@ -28,21 +28,56 @@ import {
   DownCircleOutlined,
 } from '@ant-design/icons';
 import { PersonInfoItem } from '@/pages/PersonAdmin/data';
-import {getPersonalInfo, getUserAIScore, getUserAppearancePair, rateAppearance} from '@/services/users';
+import {
+  deleteUserLuck,
+  getPersonalInfo,
+  getUserAIScore,
+  rateAppearance,
+  sendVoucherInfo,
+  VoucherInfo,
+} from '@/services/users';
 import { FAIL_MESSAGE_DURATION, SUCCESS_MESSAGE_DURATION } from '@/utils/constant';
 import DescriptionItem from '@/components/DescriptionItem';
 import { getGenderText, getUserTypeText } from '@/utils/format';
 import { useRequest } from '@@/plugin-request/request';
 import { getFacultyList } from '@/services/faculty';
-import { PageLoading } from '@ant-design/pro-components';
+import { PageLoading, ProFormInstance } from '@ant-design/pro-components';
 import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import { getActivityList } from '@/services/activity';
 import { ActivityItem } from '@/pages/data';
 import styles from './index.less';
 import Record from './Record';
 import { getUserLuckRecord, editUserLuck } from '@/services/users';
-import { ProFormSelect } from '@ant-design/pro-components';
-import { deleteUserLuck } from '@/services/users';
+import { ProFormSelect, ProFormItem } from '@ant-design/pro-components';
+import { Select } from 'antd';
+import { FormInstance } from 'antd/lib/form';
+import moment from 'moment';
+
+const CustomButton = ({ onClick, buttonText }) => {
+  const handleViewReason = () => {
+    // TODO: 添加查看原因的逻辑
+  };
+
+  return (
+    <Space style={{ marginTop: '24px' }}>
+      <Button type="primary" size="large" style={{ width: '96px' }} onClick={onClick}>
+        {buttonText}
+      </Button>
+      <Button
+        type="primary"
+        size="large"
+        style={{ width: '96px' }}
+        danger
+        onClick={() => setConfirmRatingModalVisible(true)}
+      >
+        不符合
+      </Button>
+      <Button type="primary" size="large" style={{ width: '96px' }} onClick={handleViewReason}>
+        查看原因
+      </Button>
+    </Space>
+  );
+};
 
 const columnAttrList = [
   { column: '生日', dataIndex: 'birth' },
@@ -126,17 +161,17 @@ export type luckyEditInfo = {
   reason?: string;
   subtotal?: number;
 };
-export type userAppearancePair = {
-  aiAppearance?: number;
-  appearance?: number;
-};
 
 const PersonAdmin: React.FC = () => {
   const actionRef = useRef<ActionType>();
+  const formRef = useRef<ProFormInstance>();
   const [reqActivity, setReqActivity] = useState<ActivityItem | undefined>(undefined);
   const [columnsState, setColumnsState] =
     useState<Record<string, ColumnsState>>(getInitialColumnsState);
+
   const [ratingDrawerVisible, setRatingDrawerVisible] = useState<boolean>(false);
+  const [voucherDrawerVisible, setVoucherDrawerVisible] = useState<boolean>(false);
+  // const [editDrawerVisible, setEditDrawerVisible] = useState<boolean>(false);
   const [detailDrawerVisible, setDetailDrawerVisible] = useState<boolean>(false);
   const [confirmRatingModalVisible, setConfirmRatingModalVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<PersonInfoItem>();
@@ -144,7 +179,6 @@ const PersonAdmin: React.FC = () => {
   const [luckyNumberEditVisible, setluckyNumberEditVisible] = useState<boolean>(false);
   const [luckyInfo, setLuckyInfo] = useState<luckyInfoOfUser>({});
   const [AIscore, setAIscore] = useState<number>(0);
-  const [userAppearancePair, setUserAppearancePair] = useState<userAppearancePair>({});
 
   // FETCH 学院信息
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
@@ -158,6 +192,29 @@ const PersonAdmin: React.FC = () => {
 
   if (loading1 || loading2) {
     return <PageLoading />;
+  }
+
+  const handleConfirmVoucher = async () => {
+    // console.log(currentRow);
+    const values = await formRef.current?.validateFieldsReturnFormatValue?.();
+    // console.log('校验表单并返回格式化后的所有数据：', values);
+    if (!currentRow) { message.error('发送匹配券失败', FAIL_MESSAGE_DURATION); return }
+    const { couponType, duration, reasonInfo } = values;
+    const exchangeEndTime = moment().add(duration, 'M').format('YYYY-MM-DD');
+    const data: VoucherInfo = {
+      userId: currentRow.id,
+      exchangeStartTime: moment().format('YYYY-MM-DD'),
+      exchangeEndTime,
+      reason: reasonInfo,
+    };
+    const response = await sendVoucherInfo(data);
+    // console.log(1999, response)
+    try {
+      await sendVoucherInfo(data);
+      message.success('发送匹配券成功', SUCCESS_MESSAGE_DURATION);
+    } catch (error) {
+      message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
+    }
   }
 
   // 对活动顺序排序
@@ -177,7 +234,6 @@ const PersonAdmin: React.FC = () => {
 
   const handleConfirmRating = async (notCorrect?: boolean) => {
     setRatingDrawerVisible(false);
-    // setEditDrawerVisible(false);
 
     if (notCorrect) {
       const res = await rateAppearance(currentRow?.id as string, -1);
@@ -238,14 +294,20 @@ const PersonAdmin: React.FC = () => {
     actionRef?.current?.reloadAndRest?.();
   };
 
-  const appearanceMap = new Map([[1,'前0-10%'],[2,'前10-30%'],[3, '前30-50%'],[4, '前50-70%'],[5,'前70-100%']]);
-
   const columns: ProColumns<PersonInfoItem>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
       fixed: 'left',
+    },
+    {
+      title: "反馈",
+      dataIndex: 'id',
+      render: (_, record) => {
+        console.log(record)
+        return <div>"测试"</div>
+      }
     },
     {
       title: '姓名',
@@ -363,23 +425,14 @@ const PersonAdmin: React.FC = () => {
         <a
           key="rate"
           onClick={async () => {
-            // const res = await getUserAIScore(Number(record.id));
-            // if (!res || !res.success) {
-            //   message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
-            // } else {
-            //   message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
-            // }
-            // console.log(res?.data);
-            // setAIscore(res?.data);
-            const res = await getUserAppearancePair(Number(record.id));
-            // if(!res || !res.success){
-            //   message.error('获取用户appearance或ai_appearance失败', FAIL_MESSAGE_DURATION);
-            // }else{
-            //   message.success('获取该用户appearance与ai_appearance成功', SUCCESS_MESSAGE_DURATION);
-            // }
+            const res = await getUserAIScore(Number(record.id));
+            if (!res || !res.success) {
+              message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
+            } else {
+              message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
+            }
             console.log(res?.data);
-            setUserAppearancePair(res?.data);
-
+            setAIscore(res?.data);
             setRatingDrawerVisible(true);
             setCurrentRow(record);
           }}
@@ -394,6 +447,15 @@ const PersonAdmin: React.FC = () => {
           }}
         >
           详情
+        </a>,
+        <a
+          key="voucher"
+          onClick={() => {
+            setCurrentRow(record)
+            setVoucherDrawerVisible(true);
+          }}
+        >
+          发券
         </a>,
       ],
     },
@@ -438,6 +500,22 @@ const PersonAdmin: React.FC = () => {
       dataIndex: columnAttr.dataIndex,
     });
   });
+
+  const { Option } = Select;
+  // couponTypeOptions
+  const couponTypeOptions = [
+    { label: '匹配券', value: 'matching' },
+    { label: '活动券', value: 'activity' },
+  ];
+
+  // durationOptions
+  const durationOptions = [
+    { label: '12个月（默认）', value: '12' },
+    { label: '6个月', value: '6' },
+    { label: '3个月', value: '3' },
+  ];
+
+
 
   return (
     <PageContainer>
@@ -535,7 +613,6 @@ const PersonAdmin: React.FC = () => {
           setCurrentRow(undefined);
         }}
         visible={ratingDrawerVisible}
-        // visible={editDrawerVisible}
         bodyStyle={{ paddingBottom: 80 }}
         afterVisibleChange={() => {
           setCurrentRating(0);
@@ -546,20 +623,26 @@ const PersonAdmin: React.FC = () => {
             <DescriptionItem title="姓名" content={currentRow?.realname} />
           </Col>
         </Row>
-        {/*<Row>*/}
-        {/*  <Col span={24}>*/}
-        {/*    <DescriptionItem title="ai打分" content={AIscore} />*/}
-        {/*  </Col>*/}
-        {/*  <Col span={24}>*/}
-        {/*    <DescriptionItem title="建议档位" content={AIscore>70?"前0-10%":AIscore>60?"前0-10% 或 前10-30%":AIscore>40?"前10-30% 或 前30-50%":AIscore>30?"前30-50% 或 前50-70% 或 前70-100%":"前70-100%"} />*/}
-        {/*  </Col>*/}
-        {/*</Row>*/}
         <Row>
           <Col span={24}>
-            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance} />
+            <DescriptionItem title="ai打分" content={AIscore} />
           </Col>
+
           <Col span={24}>
-            <DescriptionItem title="当前档位" content={(userAppearancePair.appearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)} />
+            <DescriptionItem
+              title="建议档位"
+              content={
+                AIscore > 70
+                  ? '前0-10%'
+                  : AIscore > 60
+                    ? '前0-10% 或 前10-30%'
+                    : AIscore > 40
+                      ? '前10-30% 或 前30-50%'
+                      : AIscore > 30
+                        ? '前30-50% 或 前50-70% 或 前70-100%'
+                        : '前70-100%'
+              }
+            />
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
@@ -578,8 +661,14 @@ const PersonAdmin: React.FC = () => {
             <Radio.Button value={4}>前50-70%</Radio.Button>
             <Radio.Button value={5}>前70-100%</Radio.Button>
           </Radio.Group>
+          // <Form.Item
+          // label="分值"
+          // name="appearance"
+          // rules={[{ required: true, message: '分值不可为空' }]}
+          // >
+          // <Input />
+          // </Form.Item>
         )}
-
         <Space style={{ marginTop: '24px' }}>
           <Button
             type="primary"
@@ -688,67 +777,72 @@ const PersonAdmin: React.FC = () => {
           }
         })}
       </Drawer>
-      <Modal
-        title="用户照片不符合？"
-        visible={confirmRatingModalVisible}
-        onOk={async () => {
-          await handleConfirmRating(true);
-          setConfirmRatingModalVisible(false);
+      <Drawer
+        title="发券"
+        width={378}
+        onClose={() => {
+          setVoucherDrawerVisible(false);
         }}
-        onCancel={() => {
-          setConfirmRatingModalVisible(false);
+        visible={voucherDrawerVisible}
+        bodyStyle={{ paddingBottom: 80 }}
+        afterVisibleChange={() => {
+          setCurrentRating(0);
         }}
-        okText="确认"
-        cancelText="取消"
       >
-        确认该用户照片不符合要求？
-      </Modal>
-      {luckyNumberEditVisible && (
-        <Drawer
-          title="幸运值编辑"
-          width={400}
-          onClose={() => {
-            setluckyNumberEditVisible(false);
-            setCurrentRow(undefined);
-          }}
-          visible={luckyNumberEditVisible}
-          bodyStyle={{ paddingBottom: 80 }}
-        >
-          <div className={styles.formcontainer}>
-            <div className={styles.avg}>
-              *当前所有用户幸运值的平均分{luckyInfo.allUserAverage} 中位数{luckyInfo.allUserMiddle}
-            </div>
-            <ProForm onFinish={handleLuckChange}>
-              <ProFormSelect
-                name="activityId"
-                label="活动期数"
-                request={async () => activityMenuForLuck}
-                placeholder="请选择活动期数"
-                rules={[{ required: true, message: '请选择活动期数' }]}
-              />
-              <ProFormText
-                width="md"
-                name="subtotal"
-                label="改动分值"
-                placeholder="例如'+1'或'-3',不含引号"
-                rules={[{ required: true, message: '请填写改动分值' }]}
-              />
-              <ProFormText
-                rules={[{ required: true, message: '请说明改动原因' }]}
-                width="md"
-                name="reason"
-                label="改动原因"
-                placeholder=""
-              />
-            </ProForm>
-          </div>
-          {luckyInfo.records?.map((luckyrecord) => (
-            <Record {...luckyrecord} handleDelete={handleLuckDelete} />
-          ))}
-        </Drawer>
-      )}
-    </PageContainer>
-  );
-};
+        <ProForm submitter={false} formRef={formRef}>
+          <ProFormItem
+            label="优惠券类型"
+            name="couponType"
+            initialValue="matching"
+            style={{ marginBottom: -25 }}
+          >
+            <ProFormSelect
+              name="couponType"
+              options={couponTypeOptions}
+              valueEnum={{ matching: '匹配券', activity: '活动券' }}
+              style={{ marginBottom: 10 }}
+            />
+          </ProFormItem>
+          <ProFormItem label="有效期" name="duration" initialValue="12">
+            <Select style={{ marginBottom: 2 }} defaultValue="12">
+              {durationOptions.map((option) => (
+                <Option value={option.value} key={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
+          </ProFormItem>
+          <ProFormItem label="发券原因" name="reasonInfo">
+            <ProFormTextArea
+              placeholder="请输入发券原因"
+              style={{ height: '100px', width: '100%' }}
+            />
+          </ProFormItem>
+          <ProFormItem>
+            <Space style={{ marginTop: '24px' }}>
+              <Button
+                type="primary"
+                size="large"
+                style={{ width: '96px' }}
+
+                onClick={() => { handleConfirmVoucher() }}
+              >
+                提交
+              </Button>
+              {/* <Button
+                type="primary"
+                size="large"
+                style={{ width: '96px' }}
+                onClick={() => handleViewReason()}
+              >
+                查看原因
+              </Button> */}
+            </Space>
+          </ProFormItem>
+        </ProForm>
+      </Drawer>
+    </PageContainer >
+  )
+}
 
 export default PersonAdmin;

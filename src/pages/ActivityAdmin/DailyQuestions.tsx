@@ -1,10 +1,10 @@
-import {Col, Divider, Drawer, message, Row} from "antd";
-import type {ActivityItem, DailyQuestion} from "@/pages/data";
-import type {MatchResultItem} from "@/pages/ActivityAdmin/data";
-import {useRequest} from "@@/plugin-request/request";
-import {PageLoading} from "@ant-design/pro-components";
-import {getUserMatchInfo} from "@/services/activity";
-import {LikeFilled, LikeOutlined} from "@ant-design/icons";
+import { Col, Divider, Drawer, message, Row } from "antd";
+import type { ActivityItem, DailyQuestion } from "@/pages/data";
+import type { MatchResultItem } from "@/pages/ActivityAdmin/data";
+import { useRequest } from "@@/plugin-request/request";
+import { PageLoading } from "@ant-design/pro-components";
+import { getUserMatchInfo } from "@/services/activity";
+import { LikeFilled, LikeOutlined } from "@ant-design/icons";
 
 interface DailyQuestionsProps {
   activity: ActivityItem | undefined
@@ -19,16 +19,18 @@ type DailyData = {
 }
 
 const DailyQuestions = (props: DailyQuestionsProps) => {
-  const {visible = false, onClose, values, activity} = props
-
+  const { visible = false, onClose, values, activity } = props
   // FETCH 用户个人信息
-  const {loading, error, data: dailyQuestion} =
+  const { loading, error, data: dailyQuestion } =
     useRequest(() => {
-      return getUserMatchInfo({activityId: activity?.id as number, studentNumber: values?.studentNumber as string})
+      return getUserMatchInfo({ activityId: activity?.id as number, studentNumber: values?.studentNumber as string })
     }, {
       formatResult: res => res?.data.dailyQuestion,
       ready: visible
     })
+  // console.log(111, values)
+  // console.log(222, typeof values.id)
+  // console.log(333, values.id)
 
   if (error) {
     message.error('获取每日一问信息信息失败')
@@ -42,7 +44,7 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
         visible={visible && loading && !error}
         onClose={onClose}
       >
-        <PageLoading/>
+        <PageLoading />
       </Drawer>
     )
   }
@@ -69,16 +71,16 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
       visible={visible}
     >
       <Row justify="space-between" align="middle"
-           style={{
-             fontSize: '15px',
-             lineHeight: '24px',
-             fontWeight: 'bold',
-           }}
+        style={{
+          fontSize: '15px',
+          lineHeight: '24px',
+          fontWeight: 'bold',
+        }}
       >
         <Col span={10}>我：{values?.name}</Col>
         <Col span={10}>Ta：{values?.matchName}</Col>
       </Row>
-      <Divider/>
+      <Divider />
       {
         data ?
           data.map((value) => {
@@ -86,27 +88,27 @@ const DailyQuestions = (props: DailyQuestionsProps) => {
               <Row justify="space-between" align="middle">
                 <Col span={10}>
                   <Row
-                    style={{fontSize: '14px', lineHeight: '24px', fontWeight: 'bold'}}>Day {value.user?.index}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>Ta的提问: {value.user?.question}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>我的回答: {value.user?.answer}</Row>
+                    style={{ fontSize: '14px', lineHeight: '24px', fontWeight: 'bold' }}>Day {value.user?.index}</Row>
+                  <Row style={{ fontSize: '14px', lineHeight: '24px' }}>Ta的提问: {value.user?.question}</Row>
+                  <Row style={{ fontSize: '14px', lineHeight: '24px' }}>我的回答: {value.user?.answer}</Row>
                   {
                     value.user?.like ? <LikeFilled
-                        style={{color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
-                      : <LikeOutlined style={{fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
+                      style={{ color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px' }} />
+                      : <LikeOutlined style={{ fontSize: '24px', position: "absolute", right: '8px', bottom: '0px' }} />
                   }
                 </Col>
                 <Col span={10}>
                   <Row
-                    style={{fontSize: '14px', lineHeight: '24px', fontWeight: 'bold'}}>Day {value.matchUser?.index}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>我的提问: {value.matchUser?.question}</Row>
-                  <Row style={{fontSize: '14px', lineHeight: '24px'}}>Ta的回答: {value.matchUser?.answer}</Row>
+                    style={{ fontSize: '14px', lineHeight: '24px', fontWeight: 'bold' }}>Day {value.matchUser?.index}</Row>
+                  <Row style={{ fontSize: '14px', lineHeight: '24px' }}>我的提问: {value.matchUser?.question}</Row>
+                  <Row style={{ fontSize: '14px', lineHeight: '24px' }}>Ta的回答: {value.matchUser?.answer}</Row>
                   {
                     value.matchUser?.like ? <LikeFilled
-                        style={{color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
-                      : <LikeOutlined style={{fontSize: '24px', position: "absolute", right: '8px', bottom: '0px'}}/>
+                      style={{ color: '#918AE3', fontSize: '24px', position: "absolute", right: '8px', bottom: '0px' }} />
+                      : <LikeOutlined style={{ fontSize: '24px', position: "absolute", right: '8px', bottom: '0px' }} />
                   }
                 </Col>
-                <Divider/>
+                <Divider />
               </Row>
             )
           }) :

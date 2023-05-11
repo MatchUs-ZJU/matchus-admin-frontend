@@ -157,4 +157,30 @@ declare namespace API {
     image?: string;
     sequence?: number;
   };
+  type MatchFeedbackEnum = {
+    code: number;
+    description: string;
+  };
+
+  type MatchFeedbackState = {
+    code: number;
+    description: string;
+  };
+
+  type COSFile = {
+    id: number;
+    cloudId: string;
+    downloadUrl?: string;
+    userId: number;
+  };
+
+  type FeedbackInfo = {
+    id?: number;
+    activityId: number;
+    userId: number;
+    state: MatchFeedbackState;
+    options: MatchFeedbackState[];
+    type?: MatchFeedbackEnum;
+    images?: COSFile[];
+  };
 }

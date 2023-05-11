@@ -1,7 +1,7 @@
-import {DailyQuestionInfo, Fields} from "@/pages/data";
+import { DailyQuestionInfo, Fields } from "@/pages/data";
 
 export type MatchResultItem = {
-  id: string,
+  id: string, ams
   name: string,
   studentNumber: string,
   gender: number,
@@ -16,6 +16,7 @@ export type MatchSuccessInfo = {
   matchName: string,
   matchStudentNumber: string,
   answerDay: number,
+  feedbackStatus: number,
   twc: number,
   twcResult: number,
   isTwice: boolean,
@@ -34,3 +35,5 @@ export type UserMatchInfo = {
   },
   dailyQuestion: DailyQuestionInfo
 }
+
+

@@ -37,3 +37,8 @@ export type DailyQuestion = {
   question: string
   index: number
 }
+
+export type FeedbackInfo = {
+  activityId: number
+  userId: number
+}

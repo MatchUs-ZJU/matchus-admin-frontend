@@ -9,18 +9,14 @@
   cursor: pointer;
   transition: all;
   transition-duration: 0.5s;
-
-  &:hover {
-    color: white;
-
-    background-color: #918ae3;
-  }
 }
-
+::file-selector-button:hover {
+  color: white;
+  background-color: #918ae3;
+}
 [type='file'] {
   color: #918ae3;
 }
-
 ::-ms-browse {
   height: 3rem;
   padding: 0.75rem 1rem;
@@ -30,17 +26,15 @@
   border-radius: 0.25rem;
   cursor: pointer;
 }
-
 .buttons {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  .upload {
-    background-color: white;
-  }
 }
-
+.buttons .upload {
+  background-color: white;
+}
 .usernameContainer {
   text-align: center;
 }
+/*# sourceMappingURL=./index.css.map */
