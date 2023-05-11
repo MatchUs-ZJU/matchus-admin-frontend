@@ -200,3 +200,15 @@ export async function getFeedbackInfo(activityId: number, userId: number) {
     },
   });
 }
+
+export async function updateFeedbackInfo(activityId: number, userId: number,code: number,options?: { [key: string]: any },) {
+  return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`,{
+    method: 'POST',
+    data: {
+      activityId: activityId,
+      userId: userId,
+      code: code
+    },
+    ...(options || {}),
+  });
+}
