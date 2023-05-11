@@ -67,6 +67,7 @@ const DailyFeedback = (props: DailyFeedbackProps) => {
       <div className={styles.usernameContainer}>
         <div className={styles.username}>{values?.name}</div>
       </div>
+      <Row>{'反馈状态：' + feedback?.state?.description}</Row>
       <Row>
         <Col>A:</Col>
         <Col>{feedback?.type?.description}</Col>

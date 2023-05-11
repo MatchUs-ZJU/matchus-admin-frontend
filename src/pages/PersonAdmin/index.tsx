@@ -198,7 +198,10 @@ const PersonAdmin: React.FC = () => {
     // console.log(currentRow);
     const values = await formRef.current?.validateFieldsReturnFormatValue?.();
     // console.log('校验表单并返回格式化后的所有数据：', values);
-    if (!currentRow) { message.error('发送匹配券失败', FAIL_MESSAGE_DURATION); return }
+    if (!currentRow) {
+      message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
+      return;
+    }
     const { couponType, duration, reasonInfo } = values;
     const exchangeEndTime = moment().add(duration, 'M').format('YYYY-MM-DD');
     const data: VoucherInfo = {
@@ -215,7 +218,7 @@ const PersonAdmin: React.FC = () => {
     } catch (error) {
       message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
     }
-  }
+  };
 
   // 对活动顺序排序
   if (activityList && activityList.length) {
@@ -300,14 +303,6 @@ const PersonAdmin: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       fixed: 'left',
-    },
-    {
-      title: "反馈",
-      dataIndex: 'id',
-      render: (_, record) => {
-        console.log(record)
-        return <div>"测试"</div>
-      }
     },
     {
       title: '姓名',
@@ -451,7 +446,7 @@ const PersonAdmin: React.FC = () => {
         <a
           key="voucher"
           onClick={() => {
-            setCurrentRow(record)
+            setCurrentRow(record);
             setVoucherDrawerVisible(true);
           }}
         >
@@ -514,8 +509,6 @@ const PersonAdmin: React.FC = () => {
     { label: '6个月', value: '6' },
     { label: '3个月', value: '3' },
   ];
-
-
 
   return (
     <PageContainer>
@@ -635,12 +628,12 @@ const PersonAdmin: React.FC = () => {
                 AIscore > 70
                   ? '前0-10%'
                   : AIscore > 60
-                    ? '前0-10% 或 前10-30%'
-                    : AIscore > 40
-                      ? '前10-30% 或 前30-50%'
-                      : AIscore > 30
-                        ? '前30-50% 或 前50-70% 或 前70-100%'
-                        : '前70-100%'
+                  ? '前0-10% 或 前10-30%'
+                  : AIscore > 40
+                  ? '前10-30% 或 前30-50%'
+                  : AIscore > 30
+                  ? '前30-50% 或 前50-70% 或 前70-100%'
+                  : '前70-100%'
               }
             />
           </Col>
@@ -824,8 +817,9 @@ const PersonAdmin: React.FC = () => {
                 type="primary"
                 size="large"
                 style={{ width: '96px' }}
-
-                onClick={() => { handleConfirmVoucher() }}
+                onClick={() => {
+                  handleConfirmVoucher();
+                }}
               >
                 提交
               </Button>
@@ -841,8 +835,8 @@ const PersonAdmin: React.FC = () => {
           </ProFormItem>
         </ProForm>
       </Drawer>
-    </PageContainer >
-  )
-}
+    </PageContainer>
+  );
+};
 
 export default PersonAdmin;
