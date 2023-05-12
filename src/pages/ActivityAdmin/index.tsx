@@ -18,6 +18,9 @@ import {
   outPool,
   refundOne,
 } from '@/services/activity';
+import {
+  Space,
+} from 'antd';
 import { PageLoading } from '@ant-design/pro-components';
 import {
   CHOOSE,
@@ -35,6 +38,18 @@ import { getExportedExample, getExportedTable } from '@/services/activity';
 import { uploadFile } from '@/services/activity';
 import UserInfo from './UserInfo';
 import { getFacultyList } from '@/services/faculty';
+import { ProFormInstance } from '@ant-design/pro-components';
+import { ProFormSelect, ProFormItem } from '@ant-design/pro-components';
+import { ProForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+import moment from 'moment';
+import {
+  deleteUserLuck,
+  getPersonalInfo,
+  getUserAIScore,
+  rateAppearance,
+  sendVoucherInfo,
+  VoucherInfo,
+} from '@/services/users';
 
 const MatchSuccessType = 0,
   MatchFailType = 1,
@@ -65,6 +80,9 @@ const ActivityAdmin: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRefundModalOpen, setIsRefundModalOpen] = useState<boolean>(false);
   const [queryId, setQueryId] = useState<string>('');
+  const [voucherDrawerVisible, setVoucherDrawerVisible] = useState<boolean>(false);
+  const formRef = useRef<ProFormInstance>();
+  const [currentRating, setCurrentRating] = useState<number>(0);
 
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
     formatResult: (res) => res?.data,
@@ -94,6 +112,46 @@ const ActivityAdmin: React.FC = () => {
   const showRefundModal = (record: MatchResultItem) => {
     setCurrentRow(record);
     setIsRefundModalOpen(true);
+  };
+
+  //发送匹配券
+  const { Option } = Select;
+
+  const couponTypeOptions = [
+    { label: '匹配券', value: 'matching' },
+    { label: '活动券', value: 'activity' },
+  ];
+
+  const durationOptions = [
+    { label: '12个月（默认）', value: '12' },
+    { label: '6个月', value: '6' },
+    { label: '3个月', value: '3' },
+  ];
+
+  const handleConfirmVoucher = async () => {
+    // console.log(currentRow);
+    const values = await formRef.current?.validateFieldsReturnFormatValue?.();
+    // console.log('校验表单并返回格式化后的所有数据：', values);
+    if (!currentRow) {
+      message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
+      return;
+    }
+    const { couponType, duration, reasonInfo } = values;
+    const exchangeEndTime = moment().add(duration, 'M').format('YYYY-MM-DD');
+    const data: VoucherInfo = {
+      userId: currentRow.id,
+      exchangeStartTime: moment().format('YYYY-MM-DD'),
+      exchangeEndTime,
+      reason: reasonInfo,
+    };
+    const response = await sendVoucherInfo(data);
+    // console.log(1999, response)
+    try {
+      await sendVoucherInfo(data);
+      message.success('发送匹配券成功', SUCCESS_MESSAGE_DURATION);
+    } catch (error) {
+      message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
+    }
   };
 
   // 加载活动列表
@@ -488,6 +546,16 @@ const ActivityAdmin: React.FC = () => {
         >
           <span style={{ color: '#808080' }}>退款</span>
         </a>,
+        <a
+          key="voucher"
+          onClick={() => {
+            setCurrentRow(record);
+            setVoucherDrawerVisible(true);
+          }}
+          style={{ color: 'rgb(128, 128, 128)' }}
+        >
+          发券
+        </a >
       ],
     },
   ];
@@ -938,10 +1006,10 @@ const ActivityAdmin: React.FC = () => {
           reqType === MatchSuccessType
             ? successfulColumns
             : reqType === MatchFailType
-            ? failColumns
-            : reqType === MatchOutType
-            ? outColumns
-            : noResultColumns
+              ? failColumns
+              : reqType === MatchOutType
+                ? outColumns
+                : noResultColumns
         }
       />
       {userInfoDrawerVisible && (
@@ -953,7 +1021,7 @@ const ActivityAdmin: React.FC = () => {
           }}
           id={queryId}
           faculties={faculties}
-          //values={currentRow}
+        //values={currentRow}
         />
       )}
       {matchDetailDrawerVisible && (
@@ -1041,6 +1109,71 @@ const ActivityAdmin: React.FC = () => {
       >
         {'确认退款' + currentReqActivity?.name + '的' + currentRow?.name + '?'}
       </Modal>
+      <Drawer
+        title="发券"
+        width={378}
+        onClose={() => {
+          setVoucherDrawerVisible(false);
+        }}
+        visible={voucherDrawerVisible}
+        bodyStyle={{ paddingBottom: 80 }}
+        afterVisibleChange={() => {
+          setCurrentRating(0);
+        }}
+      >
+        <ProForm submitter={false} formRef={formRef}>
+          <ProFormItem
+            label="优惠券类型"
+            name="couponType"
+            initialValue="matching"
+            style={{ marginBottom: -25 }}
+          >
+            <ProFormSelect
+              name="couponType"
+              options={couponTypeOptions}
+              valueEnum={{ matching: '匹配券', activity: '活动券' }}
+              style={{ marginBottom: 10 }}
+            />
+          </ProFormItem>
+          <ProFormItem label="有效期" name="duration" initialValue="12">
+            <Select style={{ marginBottom: 2 }} defaultValue="12">
+              {durationOptions.map((option) => (
+                <Option value={option.value} key={option.value}>
+                  {option.label}
+                </Option>
+              ))}
+            </Select>
+          </ProFormItem>
+          <ProFormItem label="发券原因" name="reasonInfo">
+            <ProFormTextArea
+              placeholder="请输入发券原因"
+              style={{ height: '100px', width: '100%' }}
+            />
+          </ProFormItem>
+          <ProFormItem>
+            <Space style={{ marginTop: '24px' }}>
+              <Button
+                type="primary"
+                size="large"
+                style={{ width: '96px' }}
+                onClick={() => {
+                  handleConfirmVoucher();
+                }}
+              >
+                提交
+              </Button>
+              {/* <Button
+                type="primary"
+                size="large"
+                style={{ width: '96px' }}
+                onClick={() => handleViewReason()}
+              >
+                查看原因
+              </Button> */}
+            </Space>
+          </ProFormItem>
+        </ProForm>
+      </Drawer>
     </PageContainer>
   );
 };
