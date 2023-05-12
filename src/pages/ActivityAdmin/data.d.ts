@@ -21,6 +21,7 @@ export type MatchSuccessInfo = {
   twcResult: number,
   isTwice: boolean,
   userType: number,
+  state: number
 }
 
 export type MatchFailInfo = {

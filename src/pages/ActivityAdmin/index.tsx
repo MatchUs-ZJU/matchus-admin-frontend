@@ -336,23 +336,23 @@ const ActivityAdmin: React.FC = () => {
     },
     {
       title: '反馈状态',
-      dataIndex: 'feedbackStatus',
+      dataIndex: 'state',
       valueEnum: {
-        notSubmitted: {
-          text: '未提交',
+        0: {
+          text: <Tag color="warning">未提交</Tag>,
         },
-        notFeedback: {
-          text: '未反馈',
+        1: {
+          text: <Tag color="error">未处理</Tag>,
         },
-        feedbacked: {
-          text: '已反馈',
+        2: {
+          text: <Tag color="success">已处理</Tag>,
         },
       },
       filters: true,
       onFilter: (value, record) => {
-        return record.feedbackStatus === value;
+        return record.state === value;
       },
-      filteredValue: filteredInfo.feedbackStatus || null,
+      filteredValue: filteredInfo.state || null,
     },
     {
       title: '双选操作',
