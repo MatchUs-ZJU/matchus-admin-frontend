@@ -33,6 +33,8 @@ import { numberFilter, numberSorter, stringSorter } from '@/utils/utils';
 import styles from './index.less';
 import { getExportedExample, getExportedTable } from '@/services/activity';
 import { uploadFile } from '@/services/activity';
+import UserInfo from './UserInfo';
+import { getFacultyList } from '@/services/faculty';
 
 const MatchSuccessType = 0,
   MatchFailType = 1,
@@ -55,12 +57,18 @@ const ActivityAdmin: React.FC = () => {
   const [matchDetailDrawerVisible, setMatchDetailDrawerVisible] = useState<boolean>(false);
   const [dailyFeedbackDrawerVisible, setDailyFeedbackDrawerVisible] = useState<boolean>(false);
   const [dailyQuestionDrawerVisible, setDailyQuestionDrawerVisible] = useState<boolean>(false);
+  const [userInfoDrawerVisible, setUserInfoDrawerVisible] = useState<boolean>(false);
   const [currentRow, setCurrentRow] = useState<MatchResultItem | undefined>(undefined);
   const [failReason, setFailReason] = useState<string>('');
   const [filteredInfo, setFilteredInfo] = useState<Record<string, FilterValue | null>>({});
   const [sortedInfo, setSortedInfo] = useState<SorterResult<any>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRefundModalOpen, setIsRefundModalOpen] = useState<boolean>(false);
+  const [queryId, setQueryId] = useState<string>('');
+
+  const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
+    formatResult: (res) => res?.data,
+  });
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -76,7 +84,7 @@ const ActivityAdmin: React.FC = () => {
 
   const handleRefundModalOk = async (activityId: number, userId: number) => {
     const result = await refundOne(activityId, userId);
-    console.log(result)
+    console.log(result);
     if (!!result && result.data.success) {
       message.success('提交退款成功');
     }
@@ -119,7 +127,7 @@ const ActivityAdmin: React.FC = () => {
   };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    let file = e.target.files[0];
+    const file = e.target.files[0];
     const res = await uploadFile(currentReqActivity?.id, file);
     console.log(res);
     if (!res || !res.success) {
@@ -411,6 +419,26 @@ const ActivityAdmin: React.FC = () => {
       valueType: 'option',
       render: (_, record) => [
         <a
+          key="userInfo"
+          onClick={() => {
+            setQueryId(record.id);
+            console.log(record.id);
+            setUserInfoDrawerVisible(true);
+          }}
+        >
+          用户信息
+        </a>,
+        <a
+          key="matchUserInfo"
+          onClick={() => {
+            setQueryId(record.matchUserId);
+            console.log(record.matchUserId);
+            setUserInfoDrawerVisible(true);
+          }}
+        >
+          匹配对象信息
+        </a>,
+        <a
           key="matchDetail"
           onClick={() => {
             setCurrentRow(record);
@@ -438,6 +466,7 @@ const ActivityAdmin: React.FC = () => {
           每日一问
         </a>,
         <Popconfirm
+          key={record.id}
           title="确认将双选操作改为?"
           onConfirm={async () => {
             await handleEditTwc(CHOOSE, record);
@@ -880,7 +909,7 @@ const ActivityAdmin: React.FC = () => {
                 />
               }
             >
-              <Button>
+              <Button key="activity">
                 {currentReqActivity ? currentReqActivity.name : '选择活动'}
                 <DownOutlined
                   style={{
@@ -915,6 +944,18 @@ const ActivityAdmin: React.FC = () => {
             : noResultColumns
         }
       />
+      {userInfoDrawerVisible && (
+        <UserInfo
+          visible={userInfoDrawerVisible}
+          onClose={() => {
+            setUserInfoDrawerVisible(false);
+            setCurrentRow(undefined);
+          }}
+          id={queryId}
+          faculties={faculties}
+          //values={currentRow}
+        />
+      )}
       {matchDetailDrawerVisible && (
         <MatchDetail
           visible={matchDetailDrawerVisible}
