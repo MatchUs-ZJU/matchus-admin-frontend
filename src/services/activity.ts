@@ -25,6 +25,7 @@ export async function getActivityMatchInfo(
     refund?: number;
     pageIndex?: number;
     pageSize?: number;
+    state?: number;
   },
   options?: {
     [key: string]: any;
