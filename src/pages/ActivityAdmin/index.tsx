@@ -142,7 +142,7 @@ const ActivityAdmin: React.FC = () => {
       exchangeEndTime,
       reason: reasonInfo,
     };
-    const response = await sendVoucherInfo(data);
+    // const response = await sendVoucherInfo(data);
     // console.log(1999, response)
     try {
       await sendVoucherInfo(data);
@@ -1004,10 +1004,10 @@ const ActivityAdmin: React.FC = () => {
           reqType === MatchSuccessType
             ? successfulColumns
             : reqType === MatchFailType
-            ? failColumns
-            : reqType === MatchOutType
-            ? outColumns
-            : noResultColumns
+              ? failColumns
+              : reqType === MatchOutType
+                ? outColumns
+                : noResultColumns
         }
       />
       {userInfoDrawerVisible && (
@@ -1019,7 +1019,7 @@ const ActivityAdmin: React.FC = () => {
           }}
           id={queryId}
           faculties={faculties}
-          //values={currentRow}
+        //values={currentRow}
         />
       )}
       {matchDetailDrawerVisible && (
