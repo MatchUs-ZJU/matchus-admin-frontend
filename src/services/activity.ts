@@ -205,7 +205,7 @@ export async function getFeedbackInfo(activityId: number, userId: number) {
 export async function updateFeedbackInfo(
   activityId: number,
   userId: number,
-  code: number,
+  reason: string,
   options?: { [key: string]: any },
 ) {
   return request<API.ResponseData<API.FeedbackInfo>>(`${BASE_URL}/activity/matchFeedback`, {
@@ -213,7 +213,7 @@ export async function updateFeedbackInfo(
     data: {
       activityId: activityId,
       userId: userId,
-      code: code,
+      reason: reason,
     },
     ...(options || {}),
   });

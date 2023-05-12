@@ -210,9 +210,6 @@ const PersonAdmin: React.FC = () => {
       exchangeEndTime,
       reason: reasonInfo,
     };
-    // console.log(2023, data);
-    // const response = await sendVoucherInfo(data);
-    // console.log(1999, response)
     try {
       await sendVoucherInfo(data);
       message.success('发送匹配券成功', SUCCESS_MESSAGE_DURATION);

@@ -99,12 +99,16 @@ const ActivityAdmin: React.FC = () => {
   };
 
   const handleRefundModalOk = async (activityId: number, userId: number) => {
-    const result = await refundOne(activityId, userId);
-    console.log(result);
-    if (!!result && result.data.success) {
-      message.success('提交退款成功');
-    }
+    const refund = async () => {
+      const result = await refundOne(activityId, userId);
+      console.log(result);
+      if (!!result && result.data.success) {
+        message.success('提交退款成功');
+      }
+    };
+    await refund();
     setIsRefundModalOpen(false);
+    actionRef.current?.reload()
   };
 
   const showRefundModal = (record: MatchResultItem) => {
@@ -1042,6 +1046,9 @@ const ActivityAdmin: React.FC = () => {
           }}
           activity={currentReqActivity}
           values={currentRow}
+          reload={() => {
+            actionRef.current?.reload();
+          }}
         />
       )}
       {dailyQuestionDrawerVisible && (

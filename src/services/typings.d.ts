@@ -181,6 +181,7 @@ declare namespace API {
     state: MatchFeedbackState;
     options: MatchFeedbackState[];
     type?: MatchFeedbackEnum;
+    reason?: string;
     images?: COSFile[];
   };
 
