@@ -210,7 +210,7 @@ const PersonAdmin: React.FC = () => {
       exchangeEndTime,
       reason: reasonInfo,
     };
-    const response = await sendVoucherInfo(data);
+    //const response = await sendVoucherInfo(data);
     // console.log(1999, response)
     try {
       await sendVoucherInfo(data);
