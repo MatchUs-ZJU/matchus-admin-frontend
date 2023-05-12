@@ -18,9 +18,7 @@ import {
   outPool,
   refundOne,
 } from '@/services/activity';
-import {
-  Space,
-} from 'antd';
+import { Space } from 'antd';
 import { PageLoading } from '@ant-design/pro-components';
 import {
   CHOOSE,
@@ -555,7 +553,7 @@ const ActivityAdmin: React.FC = () => {
           style={{ color: 'rgb(128, 128, 128)' }}
         >
           发券
-        </a >
+        </a>,
       ],
     },
   ];
@@ -1006,10 +1004,10 @@ const ActivityAdmin: React.FC = () => {
           reqType === MatchSuccessType
             ? successfulColumns
             : reqType === MatchFailType
-              ? failColumns
-              : reqType === MatchOutType
-                ? outColumns
-                : noResultColumns
+            ? failColumns
+            : reqType === MatchOutType
+            ? outColumns
+            : noResultColumns
         }
       />
       {userInfoDrawerVisible && (
@@ -1021,7 +1019,7 @@ const ActivityAdmin: React.FC = () => {
           }}
           id={queryId}
           faculties={faculties}
-        //values={currentRow}
+          //values={currentRow}
         />
       )}
       {matchDetailDrawerVisible && (
