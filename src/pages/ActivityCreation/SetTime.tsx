@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, DatePicker } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Form, DatePicker, FormInstance } from 'antd';
 
 import {
   ProFormTimePicker,
@@ -9,10 +9,28 @@ import {
   ProFormText,
 } from '@ant-design/pro-components';
 
-const SetTime = ({ add }) => {
+const SetTime = ({ add, activity }) => {
+  const formRef = useRef<FormInstance>(null);
+  useEffect(() => {
+    formRef && formRef.current && formRef.current.resetFields();
+  }, [activity]);
+
+  let formActivity = {};
+  if (!!activity) {
+     formActivity = {
+      ...activity,
+      dateRange: [activity.startDate, activity.endDate],
+    };
+  }
+
   return (
     <div>
-      <ProForm layout="horizontal" onFinish={(values) => add(values)}>
+      <ProForm
+        formRef={formRef}
+        layout="horizontal"
+        onFinish={(values) => add(values)}
+        initialValues={formActivity}
+      >
         <ProForm.Group>
           <ProFormText width="xs" name="term" label="期数" />
         </ProForm.Group>

@@ -35,29 +35,39 @@ const ActivityCreation: React.FC = () => {
   const [activityCreationVisible, setActivityCreationVisible] = useState<boolean>(false);
   const [activityContent, setActivityContent] = useState<activity>({});
   const [historyActivity, setHistoryActivity] = useState<activity[]>([]);
+  const [editActivity,setEditActivity] = useState<activity>()
 
   useEffect(() => {
     getHistoryActivity()
       .then((res) => res.data)
-      .then((data) => setHistoryActivity(data.data));
+      .then((data) => {
+        setHistoryActivity(data.data);
+      });
   }, []);
 
   const handleFinishPublish = async () => {
     console.log(activityContent);
     const res = await publishActivity(activityContent);
-
+    let preText = "创建"
+    if (!!editActivity){
+      preText = "更新"
+    }
     if (!res || !res.success) {
-      message.error('创建活动失败', FAIL_MESSAGE_DURATION);
+      message.error(preText + '活动失败', FAIL_MESSAGE_DURATION);
       const actRes = await getHistoryActivity();
       setHistoryActivity(actRes.data.data);
     } else {
-      message.success('创建活动成功', SUCCESS_MESSAGE_DURATION);
+      message.success(preText + '活动成功', SUCCESS_MESSAGE_DURATION);
       const actRes = await getHistoryActivity();
       setHistoryActivity(actRes.data.data);
     }
   };
   console.log(historyActivity);
-  const addNewActivity = () => {
+  const addNewActivity = async (activity: activity | undefined = undefined) => {
+    if (!!activity) {
+      console.log('edit activity:', activity);
+    }
+    setEditActivity(activity)
     setActivityCreationVisible(true);
   };
 
@@ -116,15 +126,15 @@ const ActivityCreation: React.FC = () => {
   const steps = [
     {
       title: '设定时间',
-      content: <SetTime add={addTimeToActivity} />,
+      content: <SetTime add={addTimeToActivity} activity={editActivity} />,
     },
     {
       title: '设定每日任务',
-      content: <SetTask add={addQuestionsToActivity} />,
+      content: <SetTask add={addQuestionsToActivity} activity={editActivity}/>,
     },
     {
       title: '上传头像',
-      content: <Upload add={addContentToActivity} />,
+      content: <Upload add={addContentToActivity} activity={editActivity} />,
     },
   ];
   const [current, setCurrent] = useState(0);
@@ -149,7 +159,7 @@ const ActivityCreation: React.FC = () => {
           overflowX: 'scroll',
         }}
       >
-        <div className={styles.cardPlus} onClick={addNewActivity}>
+        <div className={styles.cardPlus} onClick={() => addNewActivity()}>
           <svg
             width="32"
             height="34"
@@ -165,7 +175,7 @@ const ActivityCreation: React.FC = () => {
           </svg>
         </div>
         {historyActivity.map((activity) => (
-          <Card key={activity.term} {...activity} editActivity={addNewActivity} />
+          <Card key={activity.term} activity={activity} editActivity={addNewActivity} />
         ))}
       </div>
 

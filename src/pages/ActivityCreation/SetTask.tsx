@@ -1,10 +1,26 @@
-import { ProForm, ProFormText } from '@ant-design/pro-components';
+import { FormInstance, ProForm, ProFormText } from '@ant-design/pro-components';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
-const SetTask = ({ add }) => {
+const SetTask = ({ add, activity }) => {
+  const formRef = useRef<FormInstance>(null);
+  useEffect(() => {
+    formRef && formRef.current && formRef.current.resetFields();
+  }, [activity]);
+  let formActivity = {};
+  if (!!activity) {
+    activity.questions.map((question, index) => {
+      const key = 'day' + (index + 1);
+      formActivity[key] = question;
+    });
+  }
   return (
-    <ProForm layout="horizontal" onFinish={(values) => add(values)}>
+    <ProForm
+      formRef={formRef}
+      layout="horizontal"
+      onFinish={(values) => add(values)}
+      initialValues={formActivity}
+    >
       <ProFormText width="xl" name="day1" label="男问女 - Day1" />
       <ProFormText width="xl" name="day2" label="男问女 - Day2" />
       <ProFormText width="xl" name="day3" label="男问女 - Day3" />
