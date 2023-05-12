@@ -18,9 +18,7 @@ import {
   outPool,
   refundOne,
 } from '@/services/activity';
-import {
-  Space,
-} from 'antd';
+import { Space } from 'antd';
 import { PageLoading } from '@ant-design/pro-components';
 import {
   CHOOSE,
@@ -148,7 +146,7 @@ const ActivityAdmin: React.FC = () => {
       exchangeEndTime,
       reason: reasonInfo,
     };
-    const response = await sendVoucherInfo(data);
+    // const response = await sendVoucherInfo(data);
     // console.log(1999, response)
     try {
       await sendVoucherInfo(data);
@@ -559,7 +557,7 @@ const ActivityAdmin: React.FC = () => {
           style={{ color: 'rgb(128, 128, 128)' }}
         >
           发券
-        </a >
+        </a>,
       ],
     },
   ];

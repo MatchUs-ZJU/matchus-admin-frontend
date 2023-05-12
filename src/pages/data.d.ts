@@ -38,7 +38,3 @@ export type DailyQuestion = {
   index: number
 }
 
-export type FeedbackInfo = {
-  activityId: number
-  userId: number
-}

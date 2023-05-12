@@ -197,7 +197,7 @@ const PersonAdmin: React.FC = () => {
   const handleConfirmVoucher = async () => {
     // console.log(currentRow);
     const values = await formRef.current?.validateFieldsReturnFormatValue?.();
-    // console.log('校验表单并返回格式化后的所有数据：', values);
+    console.log('校验表单并返回格式化后的所有数据：', values);
     if (!currentRow) {
       message.error('发送匹配券失败', FAIL_MESSAGE_DURATION);
       return;
@@ -210,8 +210,6 @@ const PersonAdmin: React.FC = () => {
       exchangeEndTime,
       reason: reasonInfo,
     };
-    //const response = await sendVoucherInfo(data);
-    // console.log(1999, response)
     try {
       await sendVoucherInfo(data);
       message.success('发送匹配券成功', SUCCESS_MESSAGE_DURATION);
@@ -628,12 +626,12 @@ const PersonAdmin: React.FC = () => {
                 AIscore > 70
                   ? '前0-10%'
                   : AIscore > 60
-                  ? '前0-10% 或 前10-30%'
-                  : AIscore > 40
-                  ? '前10-30% 或 前30-50%'
-                  : AIscore > 30
-                  ? '前30-50% 或 前50-70% 或 前70-100%'
-                  : '前70-100%'
+                    ? '前0-10% 或 前10-30%'
+                    : AIscore > 40
+                      ? '前10-30% 或 前30-50%'
+                      : AIscore > 30
+                        ? '前30-50% 或 前50-70% 或 前70-100%'
+                        : '前70-100%'
               }
             />
           </Col>
