@@ -300,6 +300,8 @@ const PersonAdmin: React.FC = () => {
     actionRef?.current?.reloadAndRest?.();
   };
 
+  const appearanceMap = new Map([[1,'前0-10%'],[2,'前10-30%'],[3, '前30-50%'],[4, '前50-70%'],[5,'前70-100%']]);
+
   const columns: ProColumns<PersonInfoItem>[] = [
     {
       title: 'ID',
@@ -616,10 +618,10 @@ const PersonAdmin: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance}/>
+            <DescriptionItem title="当前ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance}/>
           </Col>
           <Col span={24}>
-            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)}/>
+            <DescriptionItem title="当前ai/人工档位" content={(userAppearancePair.aiAppearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)}/>
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
