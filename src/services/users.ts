@@ -199,6 +199,15 @@ export function getUserAIScore(userId?: number, options?: { [key: string]: any }
   });
 }
 
+export function getUserAppearancePair(userId?: number, options?: { [key: string]: any }) {
+  return request<API.ResponseData<userAppearancePair>>(`${BASE_URL}/user/getAppearancePair`, {
+    method: 'GET',
+    params: {
+      userId,
+    },
+    ...(options || {}),
+  });
+}
 export async function editUserLuck(
   values: luckyEditInfo,
   userId: number,

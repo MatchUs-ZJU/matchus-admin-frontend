@@ -31,7 +31,7 @@ import { PersonInfoItem } from '@/pages/PersonAdmin/data';
 import {
   deleteUserLuck,
   getPersonalInfo,
-  getUserAIScore,
+  getUserAIScore, getUserAppearancePair,
   rateAppearance,
   sendVoucherInfo,
   VoucherInfo,
@@ -161,6 +161,10 @@ export type luckyEditInfo = {
   reason?: string;
   subtotal?: number;
 };
+export type userAppearancePair = {
+  aiAppearance?:number;
+  appearance?:number;
+};
 
 const PersonAdmin: React.FC = () => {
   const actionRef = useRef<ActionType>();
@@ -179,6 +183,7 @@ const PersonAdmin: React.FC = () => {
   const [luckyNumberEditVisible, setluckyNumberEditVisible] = useState<boolean>(false);
   const [luckyInfo, setLuckyInfo] = useState<luckyInfoOfUser>({});
   const [AIscore, setAIscore] = useState<number>(0);
+  const [userAppearancePair, setUserAppearancePair] = useState<userAppearancePair>({});
 
   // FETCH 学院信息
   const { loading: loading1, data: faculties } = useRequest(getFacultyList, {
@@ -418,14 +423,9 @@ const PersonAdmin: React.FC = () => {
         <a
           key="rate"
           onClick={async () => {
-            const res = await getUserAIScore(Number(record.id));
-            if (!res || !res.success) {
-              message.error('获取该用户ai打分失败', FAIL_MESSAGE_DURATION);
-            } else {
-              message.success('获取该用户ai打分成功', SUCCESS_MESSAGE_DURATION);
-            }
+            const res = await getUserAppearancePair(Number(record.id));
             console.log(res?.data);
-            setAIscore(res?.data);
+            setUserAppearancePair(res?.data);
             setRatingDrawerVisible(true);
             setCurrentRow(record);
           }}
@@ -616,24 +616,10 @@ const PersonAdmin: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title="ai打分" content={AIscore} />
+            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance}/>
           </Col>
-
           <Col span={24}>
-            <DescriptionItem
-              title="建议档位"
-              content={
-                AIscore > 70
-                  ? '前0-10%'
-                  : AIscore > 60
-                    ? '前0-10% 或 前10-30%'
-                    : AIscore > 40
-                      ? '前10-30% 或 前30-50%'
-                      : AIscore > 30
-                        ? '前30-50% 或 前50-70% 或 前70-100%'
-                        : '前70-100%'
-              }
-            />
+            <DescriptionItem title="ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)}/>
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
