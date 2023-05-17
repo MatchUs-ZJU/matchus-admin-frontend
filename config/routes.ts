@@ -78,6 +78,11 @@ export default [
             name: '帮助页',
             component: './Help',
           },
+          {
+            path: 'maintain',
+            name: '维护',
+            component: './Maintain',
+          },
         ],
       },
       {
