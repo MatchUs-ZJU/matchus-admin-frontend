@@ -188,4 +188,11 @@ declare namespace API {
   type DefaultResponse = {
     success: boolean
   }
+
+  type MaintainTime = {
+    startTime: datetime,
+    endTime: datatime,
+    activate: boolean,
+    description?: string
+  }
 }
