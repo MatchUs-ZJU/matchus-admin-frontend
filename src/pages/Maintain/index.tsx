@@ -1,6 +1,5 @@
 import { getMaintainTime, updateMaintainTime } from '@/services/maintain';
-import type {
-  ProFormInstance} from '@ant-design/pro-components';
+import type { ProFormInstance } from '@ant-design/pro-components';
 import {
   ProCard,
   ProForm,
@@ -31,7 +30,7 @@ const Maintain: React.FC = () => {
       maintain.description,
     );
     if (!!value && !!value.data) {
-      message.success("修改维护时间成功")
+      message.success('修改维护时间成功');
       setInitial(value.data);
     }
   };
@@ -92,12 +91,7 @@ const Maintain: React.FC = () => {
                 endTime: moment(value[1]).utc(),
               };
             }}
-            convertValue={(value, fields) => {
-              if (!!initialValues) {
-                return [initialValues.startTime, initialValues.endTime];
-              }
-              return undefined;
-            }}
+            initialValue={[moment(initialValues?.startTime), moment(initialValues?.endTime)]}
           />
           <ProFormTextArea
             name="description"
