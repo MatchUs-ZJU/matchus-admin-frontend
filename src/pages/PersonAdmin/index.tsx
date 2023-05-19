@@ -53,6 +53,7 @@ import { Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import moment from 'moment';
 
+
 const CustomButton = ({ onClick, buttonText }) => {
   const handleViewReason = () => {
     // TODO: 添加查看原因的逻辑
@@ -162,8 +163,8 @@ export type luckyEditInfo = {
   subtotal?: number;
 };
 export type userAppearancePair = {
-  aiAppearance?:number;
-  appearance?:number;
+  aiAppearance?: number;
+  appearance?: number;
 };
 
 const PersonAdmin: React.FC = () => {
@@ -300,7 +301,7 @@ const PersonAdmin: React.FC = () => {
     actionRef?.current?.reloadAndRest?.();
   };
 
-  const appearanceMap = new Map([[1,'前0-10%'],[2,'前10-30%'],[3, '前30-50%'],[4, '前50-70%'],[5,'前70-100%']]);
+  const appearanceMap = new Map([[1, '前0-10%'], [2, '前10-30%'], [3, '前30-50%'], [4, '前50-70%'], [5, '前70-100%']]);
 
   const columns: ProColumns<PersonInfoItem>[] = [
     {
@@ -618,10 +619,10 @@ const PersonAdmin: React.FC = () => {
         </Row>
         <Row>
           <Col span={24}>
-            <DescriptionItem title="当前ai打分" content={(userAppearancePair.aiAppearance==undefined)?'':userAppearancePair.aiAppearance}/>
+            <DescriptionItem title="当前ai打分" content={(userAppearancePair.aiAppearance == undefined) ? '' : userAppearancePair.aiAppearance} />
           </Col>
           <Col span={24}>
-            <DescriptionItem title="当前ai/人工档位" content={(userAppearancePair.aiAppearance==undefined)?'':appearanceMap.get(userAppearancePair.appearance)}/>
+            <DescriptionItem title="当前ai/人工档位" content={(userAppearancePair.aiAppearance == undefined) ? '' : appearanceMap.get(userAppearancePair.appearance)} />
           </Col>
         </Row>
         {currentRow?.photos?.map((photo) => (
@@ -756,6 +757,65 @@ const PersonAdmin: React.FC = () => {
           }
         })}
       </Drawer>
+      <Modal
+        title="用户照片不符合？"
+        visible={confirmRatingModalVisible}
+        onOk={async () => {
+          await handleConfirmRating(true);
+          setConfirmRatingModalVisible(false);
+        }}
+        onCancel={() => {
+          setConfirmRatingModalVisible(false);
+        }}
+        okText="确认"
+        cancelText="取消"
+      >
+        确认该用户照片不符合要求？
+      </Modal>
+      {luckyNumberEditVisible && (
+        <Drawer
+          title="幸运值编辑"
+          width={400}
+          onClose={() => {
+            setluckyNumberEditVisible(false);
+            setCurrentRow(undefined);
+          }}
+          visible={luckyNumberEditVisible}
+          bodyStyle={{ paddingBottom: 80 }}
+        >
+          <div className={styles.formcontainer}>
+            <div className={styles.avg}>
+              *当前所有用户幸运值的平均分{luckyInfo.allUserAverage} 中位数{luckyInfo.allUserMiddle}
+            </div>
+            <ProForm onFinish={handleLuckChange}>
+              <ProFormSelect
+                name="activityId"
+                label="活动期数"
+                request={async () => activityMenuForLuck}
+                placeholder="请选择活动期数"
+                rules={[{ required: true, message: '请选择活动期数' }]}
+              />
+              <ProFormText
+                width="md"
+                name="subtotal"
+                label="改动分值"
+                placeholder="例如'+1'或'-3',不含引号"
+                rules={[{ required: true, message: '请填写改动分值' }]}
+              />
+              <ProFormText
+                rules={[{ required: true, message: '请说明改动原因' }]}
+                width="md"
+                name="reason"
+                label="改动原因"
+                placeholder=""
+              />
+            </ProForm>
+          </div>
+          {luckyInfo.records?.map((luckyrecord) => (
+            <Record {...luckyrecord} handleDelete={handleLuckDelete} />
+          ))}
+        </Drawer>
+      )}
       <Drawer
         title="发券"
         width={378}
