@@ -37,4 +37,42 @@ export type UserMatchInfo = {
   dailyQuestion: DailyQuestionInfo
 }
 
+export type UserFeedbackInfo = {
+  total: boolean;
+  size: string;
+  current: string;
+  pages: string;
+  records: FeedbackRecord[];
+  success: boolean;
+};
+
+export type FeedbackRecord = {
+  user: UserInfo;
+  feedback: Feedback;
+  images: Image;
+};
+
+export type UserInfo = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  gender: string;
+};
+
+export type Feedback = {
+  id: string;
+  user_id: string;
+  opinion: string;
+  image_ids: string;
+  state: string;
+  contact: string;
+  create_time: string;
+  update_time: string;
+};
+
+export type Image = {
+  downloadUrl: string;
+};
+
+
 

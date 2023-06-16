@@ -11,7 +11,7 @@ export default {
     '/api/': {
       // target: 'https://admin-backend-test-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       // target: 'https://admin-prod-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
-      target: 'http://localhost:8080/',
+      target: 'https://admin-backend-test-2086563-1309499644.ap-shanghai.run.tcloudbase.com',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
       secure: false,
